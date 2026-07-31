@@ -12,6 +12,15 @@ which lines moved.
 
 Nothing yet.
 
+## 1.3 — 2026-07-31
+
+### Changed
+
+- **Tapping the times on a sailing opens the map at that departure.** Tap the 16:07
+  on a card and the slider sits at 16:07 with that boat marked as yours, rather than
+  wherever the clock happened to be. Each card carries a small *map ›* to show it can
+  be tapped. Opening the Map tab directly still starts from the time you searched for.
+
 ## 1.2 — 2026-07-31
 
 ### Added

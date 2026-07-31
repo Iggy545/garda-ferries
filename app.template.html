@@ -142,7 +142,15 @@ button:active { background: var(--accent-soft); }
   align-items: baseline;
   gap: 8px;
   font-variant-numeric: tabular-nums;
+  cursor: pointer;
 }
+.pin {
+  flex: none;
+  font-size: 12px;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.times:active .pin { opacity: .5; }
 .t { font-size: 25px; font-weight: 600; letter-spacing: -.02em; }
 .arrow { color: var(--muted); font-size: 17px; }
 .dur { margin-left: auto; color: var(--muted); font-size: 14px; }
@@ -549,11 +557,12 @@ function directCard(journey, isNext, isLast) {
   if (journey.sr) tags.push('<span class="tag sr">SR supplement</span>');
   tags.push(`<span>corsa ${escape(journey.corsa)}</span>`);
   return `<div class="card${isNext ? " next" : ""}">
-    <div class="times">
+    <div class="times" data-dep="${journey.dep}" data-corsa="${escape(journey.corsa)}">
       <span class="t">${hhmm(journey.dep)}</span>
       <span class="arrow">→</span>
       <span class="t">${hhmm(journey.arr)}</span>
       <span class="dur">${duration(journey.arr - journey.dep)}</span>
+      <span class="pin">map ›</span>
     </div>
     <div class="meta">${tags.join("")}${callList(journey.calls)}</div>
   </div>`;
@@ -567,11 +576,12 @@ function changeCard(journey, isNext, isLast) {
         ${callList(l.calls)}</span>
     </div>`;
   return `<div class="card${isNext ? " next" : ""}">
-    <div class="times">
+    <div class="times" data-dep="${journey.dep}" data-corsa="${escape(journey.legs[0].corsa)}">
       <span class="t">${hhmm(journey.dep)}</span>
       <span class="arrow">→</span>
       <span class="t">${hhmm(journey.arr)}</span>
       <span class="dur">${duration(journey.arr - journey.dep)}</span>
+      <span class="pin">map ›</span>
     </div>
     <div class="ends">${isNext ? '<span class="tag now">next</span> ' : ""}${
       isLast ? '<span class="tag last">last boat</span> ' : ""}1 change at ${escape(journey.via)}</div>
@@ -687,6 +697,9 @@ function render() {
       render();
     };
   });
+  results.querySelectorAll("[data-dep]").forEach((row) => {
+    row.onclick = () => jumpToMap(Number(row.dataset.dep), row.dataset.corsa);
+  });
 }
 
 /* ---------- map ---------- */
@@ -733,6 +746,12 @@ function boatsAt(t) {
 // tap a boat and choose to follow that one instead.
 let myCorsa = null;
 let followed = null;
+let mapStartAt = null;   // set when a sailing is tapped, so the map opens at its departure
+
+const searchMinutes = () => {
+  const [h, m] = (timeInput.value || "00:00").split(":");
+  return Number(h) * 60 + Number(m);
+};
 
 const spotlit = () => followed || myCorsa;
 
@@ -863,15 +882,25 @@ function showTab(which) {
   $("tab-map").classList.toggle("on", onMap);
   $("tab-time").classList.toggle("on", !onMap);
   if (!onMap) return stopPlaying();
-  // Opening the map shows the lake at the time you were searching for.
-  const [h, m] = (timeInput.value || "00:00").split(":");
-  const target = Number(h) * 60 + Number(m);
-  $("clock").value = Math.min(DAY.end, Math.max(DAY.start, target));
+  // The map opens at whichever sailing you tapped, falling back to the time you
+  // were searching for if you came in from the tab instead.
+  const at = mapStartAt !== null ? mapStartAt : searchMinutes();
+  $("clock").value = Math.min(DAY.end, Math.max(DAY.start, at));
   $("boatinfo").hidden = true;
   renderMap();
 }
 
-$("tab-map").onclick = () => { picking = "from"; showTab("map"); };
+// Tapping the times on a sailing opens the map at that departure, with that boat
+// marked, so you can see where it will be rather than where the clock happens to be.
+function jumpToMap(dep, corsa) {
+  mapStartAt = dep;
+  followed = corsa;
+  picking = "from";
+  showTab("map");
+  $("pane-map").scrollIntoView({ block: "start", behavior: "smooth" });
+}
+
+$("tab-map").onclick = () => { mapStartAt = null; picking = "from"; showTab("map"); };
 $("tab-time").onclick = () => showTab("time");
 
 /* ---------- setup ---------- */
@@ -910,7 +939,8 @@ setNow();
 const collapse = () => {
   showChanges.out = showChanges.back = false;
   showAll.out = showAll.back = false;
-  followed = null;   // a new search means a new ferry to watch for
+  followed = null;     // a new search means a new ferry to watch for
+  mapStartAt = null;   // and the map should open at the new time, not an old sailing
 };
 fromSel.onchange = toSel.onchange = timeInput.onchange = () => { collapse(); render(); };
 $("now").onclick = () => { setNow(); collapse(); render(); };

@@ -20,10 +20,19 @@ them for a reader who wasn't there — what changed and why, not which lines mov
   handful around your time. On the trip back that means every boat leaving after you
   arrive; on the way out, every sailing there is.
 
+- **Times at every stop on the way.** Tap the summary line on a sailing to unfold the
+  whole chain of calls with times, so you can get off partway or work out where the
+  boat has got to. Works on each leg of a connection too.
+- **A map tab.** The real lake outline and all 27 piers, drawn from OpenStreetMap
+  data. Tap a stop to set where you are starting, tap another for the destination,
+  and it drops you back on the timetable. The sailing you are most likely to catch is
+  traced across the water, so the zig-zag between shores is visible.
+
 ### Changed
 
 - Results are split into **Out** and **Back** sections with headings, so each card no
   longer repeats the route. The *routes with a change* toggle is now per section.
+- The *via* line on each sailing became the tappable stop list described above.
 
 ## 2026-07-31 — first version
 

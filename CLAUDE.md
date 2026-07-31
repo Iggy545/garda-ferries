@@ -11,8 +11,10 @@ and no tests beyond checking results against the source PDF.
 | `Orari-Orizzontali-Web-Estate-2026.pdf` | The original Navigazione Laghi timetable. Ground truth. |
 | `garda-ferry-2026-summer.json` | Transcription of the PDF. **The data source the app is built from.** |
 | `garda-ferry-2026-summer.md` | Same data, human-readable, with accuracy notes. Use it to eyeball corrections. |
+| `garda-geography.json` | Lake outline and pier coordinates from OpenStreetMap. **Generated, but committed** — see below. |
 | `app.template.html` | The whole app — markup, CSS, search logic. Edited by hand. |
 | `build.py` | Bakes the JSON into the template and writes `index.html`. |
+| `fetch_geo.py` | Refreshes `garda-geography.json` from OpenStreetMap. The only part needing a network. |
 | `make_icon.py` | Draws `icon.png`, the home-screen icon, with zlib only. |
 | `index.html`, `icon.png` | **Generated. Never edit these directly** — the next build overwrites them. |
 | `CHANGELOG.md` | Running history of changes. Keep it current — see below. |
@@ -55,6 +57,29 @@ direct and a mixed list gets noisy.
 Around the chosen time it shows `BEFORE` (2) sailings earlier and `AFTER` (4) later,
 marking the first departure at or after that time as *next*. If nothing is left that
 day it falls back to showing the last few.
+
+## The map
+
+`fetch_geo.py` pulls the lake outline from Nominatim and the piers from
+OpenStreetMap's `amenity=ferry_terminal` nodes via Overpass, then writes
+`garda-geography.json`. **That file is committed on purpose** — `build.py` must not
+need a network, so builds stay reproducible and work offline. Re-run `fetch_geo.py`
+only if a stop is added or the outline looks wrong.
+
+`PIERS` in that script maps our stop names to OSM pier names explicitly rather than
+fuzzy-matching. Several piers are near neighbours — `Limone centro` and
+`Limone P multipiano` are 600 m apart — and a wrong guess puts a dot somewhere
+plausible but incorrect. The script exits rather than guessing if a name stops
+matching.
+
+`build_map()` in `build.py` projects lon/lat to SVG units. Longitude is scaled by
+`cos(latitude)` first; skip that and the lake comes out about 40% too wide.
+`declutter()` then pushes labels apart where piers nearly coincide.
+
+Everything is checked geometrically rather than by eye: every pier lands within 1.4
+SVG units (~130 m) of the drawn shoreline, and the drawing is 1.74 times taller than
+wide, matching the real 50 km by 28 km. If a change breaks the projection those
+numbers move immediately.
 
 ## Things that will bite you
 

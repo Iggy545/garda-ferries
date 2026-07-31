@@ -181,6 +181,74 @@ button:active { background: var(--accent-soft); }
 .legs { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line); }
 
 .empty { color: var(--muted); font-size: 14px; padding: 16px 2px; }
+
+/* every call on the stretch you are travelling, folded away until tapped */
+.calls { flex-basis: 100%; }
+.calls summary {
+  cursor: pointer;
+  list-style: none;
+  color: var(--accent);
+}
+.calls summary::-webkit-details-marker { display: none; }
+.calls summary::before { content: "▸ "; }
+.calls[open] summary::before { content: "▾ "; }
+.calls ol {
+  margin: 8px 0 2px;
+  padding: 0;
+  list-style: none;
+  border-left: 2px solid var(--line);
+}
+.calls li { padding: 3px 0 3px 12px; color: var(--muted); }
+.calls li.edge { color: var(--ink); font-weight: 500; }
+.calls .lt {
+  display: inline-block;
+  min-width: 52px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- tabs and map ---- */
+.tabs { display: flex; gap: 8px; margin: 0 0 4px; }
+.tabs button {
+  flex: 1;
+  font-size: 15px;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 10px;
+}
+.tabs button.on {
+  color: var(--accent);
+  background: var(--card);
+  border-color: var(--line);
+  font-weight: 600;
+}
+.hint { margin: 14px 2px 4px; font-size: 14px; color: var(--ink); }
+.credit { margin: 4px 2px 0; font-size: 11px; color: var(--muted); }
+#map { display: block; width: 100%; height: auto; }
+#map .water {
+  fill: var(--accent-soft);
+  stroke: var(--accent);
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+}
+#map .route {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: .85;
+}
+#map .hit { fill: transparent; }
+#map .dot { fill: var(--card); stroke: var(--accent); stroke-width: 1.6; }
+#map .leader { stroke: var(--line); stroke-width: 1; }
+#map text {
+  font-size: 12px;
+  fill: var(--muted);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+#map .from .dot, #map .to .dot { fill: var(--accent); stroke: var(--accent); }
+#map .from text, #map .to text { fill: var(--ink); font-weight: 650; }
 .more {
   width: 100%;
   margin-top: 10px;
@@ -200,6 +268,18 @@ footer a { color: var(--muted); }
   <p id="validity"></p>
 </header>
 
+<div class="tabs" role="tablist">
+  <button type="button" id="tab-time" class="on" role="tab">Timetable</button>
+  <button type="button" id="tab-map" role="tab">Map</button>
+</div>
+
+<div id="pane-map" hidden>
+  <p class="hint" id="maphint"></p>
+  <svg id="map" role="img" aria-label="Map of Lake Garda and its ferry stops"></svg>
+  <p class="credit">Lake outline and pier positions from OpenStreetMap contributors, ODbL.</p>
+</div>
+
+<div id="pane-time">
 <div class="panel">
   <div class="row">
     <div class="field">
@@ -222,6 +302,7 @@ footer a { color: var(--muted); }
 </div>
 
 <div id="results"></div>
+</div>
 
 <footer>
   Times from the Navigazione Laghi summer 2026 timetable. Check
@@ -258,6 +339,7 @@ function findDirect(a, b) {
       corsa: sailing.c,
       sr: sailing.sr,
       via: sailing.s.slice(i + 1, j).map((call) => DATA.stops[call[0]].n),
+      calls: sailing.s.slice(i, j + 1),
     });
   }
   return out.sort((x, y) => x.dep - y.dep || x.arr - y.arr);
@@ -287,9 +369,9 @@ function findOneChange(a, b) {
           wait: second.s[j][1] - first.s[m][1],
           legs: [
             { dep: first.s[i][1], arr: first.s[m][1], corsa: first.c, sr: first.sr,
-              from: a, to: via },
+              from: a, to: via, calls: first.s.slice(i, m + 1) },
             { dep: second.s[j][1], arr: second.s[k][1], corsa: second.c, sr: second.sr,
-              from: via, to: b },
+              from: via, to: b, calls: second.s.slice(j, k + 1) },
           ],
         });
       }
@@ -337,15 +419,28 @@ function pick(list, from, mode, all) {
   return { shown: list.slice(start, first + AFTER), nextIndex: first - start, total: list.length };
 }
 
+// Every call the boat makes on the stretch you are travelling, with its time —
+// folded away until tapped, so the common case stays a one-line summary.
+function callList(calls) {
+  if (calls.length <= 2) return `<span class="via">non-stop</span>`;
+  const rows = calls.map(([stop, time], i) => {
+    const edge = i === 0 || i === calls.length - 1;
+    return `<li${edge ? ' class="edge"' : ""}>
+      <span class="lt">${hhmm(time)}</span>${escape(DATA.stops[stop].n)}</li>`;
+  }).join("");
+  return `<details class="calls">
+    <summary>${calls.length - 2} stop${calls.length - 2 > 1 ? "s" : ""} on the way —
+      ${calls.slice(1, -1).map((c) => escape(DATA.stops[c[0]].n)).join(" · ")}</summary>
+    <ol>${rows}</ol>
+  </details>`;
+}
+
 function directCard(journey, isNext, isLast) {
   const tags = [];
   if (isNext) tags.push('<span class="tag now">next</span>');
   if (isLast) tags.push('<span class="tag last">last boat</span>');
   if (journey.sr) tags.push('<span class="tag sr">SR supplement</span>');
   tags.push(`<span>corsa ${escape(journey.corsa)}</span>`);
-  const via = journey.via.length
-    ? `<span class="via">via ${journey.via.map(escape).join(" · ")}</span>`
-    : `<span class="via">non-stop</span>`;
   return `<div class="card${isNext ? " next" : ""}">
     <div class="times">
       <span class="t">${hhmm(journey.dep)}</span>
@@ -353,7 +448,7 @@ function directCard(journey, isNext, isLast) {
       <span class="t">${hhmm(journey.arr)}</span>
       <span class="dur">${duration(journey.arr - journey.dep)}</span>
     </div>
-    <div class="meta">${tags.join("")}${via}</div>
+    <div class="meta">${tags.join("")}${callList(journey.calls)}</div>
   </div>`;
 }
 
@@ -361,7 +456,8 @@ function changeCard(journey, isNext, isLast) {
   const leg = (l) => `<div class="leg">
       <span class="lt">${hhmm(l.dep)} → ${hhmm(l.arr)}</span>
       <span>${escape(DATA.stops[l.from].n)} → ${escape(DATA.stops[l.to].n)}
-        <span style="color:var(--muted)">· corsa ${escape(l.corsa)}${l.sr ? " · SR" : ""}</span></span>
+        <span style="color:var(--muted)">· corsa ${escape(l.corsa)}${l.sr ? " · SR" : ""}</span>
+        ${callList(l.calls)}</span>
     </div>`;
   return `<div class="card${isNext ? " next" : ""}">
     <div class="times">
@@ -482,6 +578,83 @@ function render() {
     };
   });
 }
+
+/* ---------- map ---------- */
+
+const svg = $("map");
+const GEO = DATA.map;
+let picking = "from";   // which end of the trip the next tap on the map sets
+
+function renderMap() {
+  const a = Number(fromSel.value), b = Number(toSel.value);
+  const [h, m] = (timeInput.value || "00:00").split(":");
+  const target = Number(h) * 60 + Number(m);
+
+  // Trace the sailing they are most likely to be on, so the zig-zag between the
+  // shores is visible rather than implied by a straight line.
+  let route = "";
+  if (a !== b) {
+    const direct = findDirect(a, b);
+    const journey = direct.find((j) => j.dep >= target) || direct[direct.length - 1];
+    if (journey) {
+      const points = journey.calls.map((call) => GEO.pts[call[0]].slice(0, 2).join(",")).join(" ");
+      route = `<polyline class="route" points="${points}"/>`;
+    }
+  }
+
+  const marks = GEO.pts.map(([x, y, side, labelY], i) => {
+    const role = i === a ? "from" : i === b ? "to" : "";
+    const tx = x + side * 12;
+    const leader = Math.abs(labelY - y) > 3
+      ? `<line class="leader" x1="${x + side * 5}" y1="${y}" x2="${tx}" y2="${labelY - 4}"/>`
+      : "";
+    return `<g class="stop ${role}" data-stop="${i}">
+      ${leader}
+      <circle class="dot" cx="${x}" cy="${y}" r="${role ? 6 : 4.5}"/>
+      <text x="${tx}" y="${labelY}" text-anchor="${side < 0 ? "end" : "start"}"
+        >${escape(DATA.stops[i].n)}</text>
+      <circle class="hit" cx="${x}" cy="${y}" r="15"/>
+    </g>`;
+  }).join("");
+
+  svg.setAttribute("viewBox", `0 0 ${GEO.w} ${GEO.h}`);
+  svg.innerHTML = `<path class="water" d="${GEO.path}"/>${route}${marks}`;
+  svg.querySelectorAll("[data-stop]").forEach((group) => {
+    group.onclick = () => tapStop(Number(group.dataset.stop));
+  });
+
+  $("maphint").textContent = picking === "from"
+    ? "Tap a stop to set where you are starting from."
+    : `From ${DATA.stops[a].n}. Now tap where you are going.`;
+}
+
+function tapStop(i) {
+  if (picking === "from") {
+    fromSel.value = i;
+    picking = "to";
+    collapse();
+    render();
+    renderMap();
+    return;
+  }
+  toSel.value = i;
+  picking = "from";
+  collapse();
+  render();
+  showTab("time");   // the answer is on the timetable, so go there
+}
+
+function showTab(which) {
+  const onMap = which === "map";
+  $("pane-map").hidden = !onMap;
+  $("pane-time").hidden = onMap;
+  $("tab-map").classList.toggle("on", onMap);
+  $("tab-time").classList.toggle("on", !onMap);
+  if (onMap) renderMap();
+}
+
+$("tab-map").onclick = () => { picking = "from"; showTab("map"); };
+$("tab-time").onclick = () => showTab("time");
 
 /* ---------- setup ---------- */
 

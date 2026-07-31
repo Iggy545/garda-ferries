@@ -10,13 +10,21 @@ transcribing a new PDF.
 """
 
 import json
+import math
 import pathlib
 import sys
 
 HERE = pathlib.Path(__file__).parent
 SOURCE = HERE / "garda-ferry-2026-summer.json"
+GEO_FILE = HERE / "garda-geography.json"
 TEMPLATE = HERE / "app.template.html"
 OUTPUT = HERE / "index.html"
+
+# The map is drawn tall, as the lake is: about 50 km north to south and 28 km across
+# at its widest. LAKE_HEIGHT sets the drawing size in SVG units and the width follows
+# from the real proportions. MARGIN leaves room for the labels beside it.
+LAKE_HEIGHT = 520
+MARGIN = 72
 
 # Stops in geographic order around the lake, anticlockwise from the south-east
 # corner. The PDF lists them in timetable order, which is not useful in a
@@ -65,6 +73,73 @@ def to_minutes(hhmm):
     return int(hours) * 60 + int(minutes)
 
 
+LABEL_GAP = 15  # SVG units needed between two labels before they touch
+
+
+def declutter(points):
+    """Nudge labels apart where piers sit almost on top of each other.
+
+    The two Limone piers are 600 m apart, which at this scale is about six units —
+    their names would overprint. Each shore is handled separately: push labels down
+    until they clear, then shift the whole run back up by half the total push so the
+    group stays centred on the piers it belongs to.
+    """
+    for side in (-1, 1):
+        run = sorted((p for p in points if p[2] == side), key=lambda p: p[1])
+        for earlier, later in zip(run, run[1:]):
+            if later[3] - earlier[3] < LABEL_GAP:
+                later[3] = earlier[3] + LABEL_GAP
+        if run:
+            drift = (run[-1][3] - run[-1][1]) / 2
+            for point in run:
+                point[3] = round(point[3] - drift, 1)
+
+
+def build_map(order):
+    """Project the lake outline and piers into SVG coordinates.
+
+    Longitude degrees are shorter than latitude ones, by the cosine of the latitude,
+    so they are scaled before anything else — without that the lake comes out about
+    40% too wide and stops sitting on the wrong side of a bay.
+    """
+    geo = json.loads(GEO_FILE.read_text(encoding="utf-8"))
+    outline, piers = geo["outline"], geo["piers"]
+
+    lats = [lat for _, lat in outline]
+    lons = [lon for lon, _ in outline]
+    squeeze = math.cos(math.radians(sum(lats) / len(lats)))
+
+    west, east = min(lons) * squeeze, max(lons) * squeeze
+    south, north = min(lats), max(lats)
+    scale = LAKE_HEIGHT / (north - south)
+    width = (east - west) * scale
+
+    def project(lon, lat):
+        # y is flipped: latitude climbs northward, SVG counts downward.
+        return (round((lon * squeeze - west) * scale + MARGIN, 1),
+                round((north - lat) * scale + MARGIN, 1))
+
+    path = "M" + "L".join(f"{x} {y}" for x, y in (project(lon, lat) for lon, lat in outline)) + "Z"
+
+    middle = (west + east) / 2
+    points = []
+    for stop in order:
+        lon, lat = piers[stop]
+        x, y = project(lon, lat)
+        # Labels go on the outside of whichever shore the pier is on, so they never
+        # sit over the water where the route lines are drawn.
+        points.append([x, y, -1 if lon * squeeze < middle else 1, y])
+
+    declutter(points)
+
+    return {
+        "w": round(width + MARGIN * 2, 1),
+        "h": round(LAKE_HEIGHT + MARGIN * 2, 1),
+        "path": path,
+        "pts": points,
+    }
+
+
 def main():
     timetable = json.loads(SOURCE.read_text(encoding="utf-8"))
 
@@ -109,6 +184,7 @@ def main():
         "valid": timetable["valid"],
         "stops": stops,
         "sailings": sailings,
+        "map": build_map(order),
     }
 
     html = TEMPLATE.read_text(encoding="utf-8")

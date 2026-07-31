@@ -12,6 +12,22 @@ which lines moved.
 
 Nothing yet.
 
+## 1.4 — 2026-07-31
+
+### Fixed
+
+- **The route line drew the wrong sailing.** It was chosen by the time in the search
+  box rather than by the sailing actually highlighted, so tapping a later boat left
+  the line tracing a different one — for Desenzano to Riva it drew corsa 160 while
+  corsa 6 was the green boat, missing eight stops corsa 6 really calls at. The line
+  now always belongs to the highlighted sailing, and touches every one of its calls.
+
+### Changed
+
+- The route line is **red**, with **arrowheads** partway along each leg showing which
+  way the boat travels. Legs too short to hold an arrow are left clear. The legend
+  now covers the line as well as the boats.
+
 ## 1.3 — 2026-07-31
 
 ### Changed

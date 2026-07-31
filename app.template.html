@@ -23,6 +23,7 @@
   --sr: #b4520a;
   --sr-soft: #fdeee0;
   --mine: #0f7d47;
+  --route: #cf2222;
   --shadow: 0 1px 2px rgba(16, 24, 40, .06), 0 1px 3px rgba(16, 24, 40, .08);
 }
 @media (prefers-color-scheme: dark) {
@@ -37,6 +38,7 @@
     --sr: #e8a05e;
     --sr-soft: #33230f;
     --mine: #4ed08c;
+    --route: #ff6a6a;
     --shadow: none;
   }
 }
@@ -304,6 +306,7 @@ button:active { background: var(--accent-soft); }
   background: var(--sr);
 }
 .legend .is-mine { background: var(--mine); width: 14px; height: 14px; }
+.legend .is-route { background: var(--route); width: 18px; height: 3px; border-radius: 2px; }
 #boatinfo[hidden] { display: none; }
 #boatinfo {
   display: flex;
@@ -334,12 +337,12 @@ button:active { background: var(--accent-soft); }
 }
 #map .route {
   fill: none;
-  stroke: var(--accent);
-  stroke-width: 3.5;
+  stroke: var(--route);
+  stroke-width: 3;
   stroke-linecap: round;
   stroke-linejoin: round;
-  opacity: .85;
 }
+#map .routearrow { fill: var(--route); }
 #map .hit { fill: transparent; }
 #map .dot { fill: var(--card); stroke: var(--accent); stroke-width: 1.6; }
 #map .leader { stroke: var(--line); stroke-width: 1; }
@@ -383,6 +386,7 @@ footer a { color: var(--muted); }
   </div>
   <p class="clockline" id="clockline"></p>
   <p class="legend">
+    <b><i class="is-route"></i>your route, arrows show the way it goes</b>
     <b><i class="is-mine"></i>your ferry</b>
     <b><i></i>other boats under way</b>
   </p>
@@ -819,15 +823,28 @@ function renderMap() {
   const [h, m] = (timeInput.value || "00:00").split(":");
   const target = Number(h) * 60 + Number(m);
 
-  // Trace the sailing they are most likely to be on, so the zig-zag between the
-  // shores is visible rather than implied by a straight line.
+  // Trace the sailing that is actually highlighted, so the line and the green boat
+  // always tell the same story. Picking by time instead drew a different sailing's
+  // route — one that skipped stops the highlighted boat really calls at.
   let route = "";
   if (a !== b) {
     const direct = findDirect(a, b);
-    const journey = direct.find((j) => j.dep >= target) || direct[direct.length - 1];
+    const mine = spotlit();
+    const journey = direct.find((j) => j.corsa === mine)
+      || direct.find((j) => j.dep >= target)
+      || direct[direct.length - 1];
     if (journey) {
-      const points = journey.calls.map((call) => GEO.pts[call[0]].slice(0, 2).join(",")).join(" ");
-      route = `<polyline class="route" points="${points}"/>`;
+      const xy = journey.calls.map((call) => GEO.pts[call[0]].slice(0, 2));
+      route = `<polyline class="route" points="${xy.map((p) => p.join(",")).join(" ")}"/>`;
+      // An arrowhead partway along each leg, so which way the boat is going is
+      // obvious. Short hops are skipped — an arrow bigger than its leg reads as clutter.
+      route += xy.slice(1).map(([x2, y2], i) => {
+        const [x1, y1] = xy[i];
+        if (Math.hypot(x2 - x1, y2 - y1) < 26) return "";
+        const turn = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+        return `<path class="routearrow" d="M-5 -3.6L5.5 0L-5 3.6Z" transform="translate(
+          ${((x1 + x2) / 2).toFixed(1)} ${((y1 + y2) / 2).toFixed(1)}) rotate(${turn.toFixed(1)})"/>`;
+      }).join("");
     }
   }
 

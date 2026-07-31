@@ -1,0 +1,1165 @@
+{
+ "timetable": "Lake Garda - Navigazione Laghi - ESTATE 2026",
+ "valid": "2026-05-16 to 2026-10-04",
+ "notes": "sr=true means Servizio Rapido (fast, supplement payable). Stop order within a sailing follows the printed row order, which a few sailings deviate from; times are authoritative.",
+ "directions": {
+  "DESENZANO -> RIVA DEL GARDA": [
+   {
+    "corsa": "14",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "PESCHIERA": "8:00",
+     "LAZISE": "8:28",
+     "BARDOLINO": "8:45",
+     "GARDA": "9:00"
+    }
+   },
+   {
+    "corsa": "28",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "DESENZANO": "8:00",
+     "SIRMIONE": "8:20",
+     "MONIGA": "8:42",
+     "MANERBA (Dusano)": "8:56",
+     "PORTESE": "9:26",
+     "SALO": "9:37",
+     "GARDONE": "9:51"
+    }
+   },
+   {
+    "corsa": "40",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "DESENZANO": "8:15",
+     "MANERBA (Dusano)": "8:45"
+    }
+   },
+   {
+    "corsa": "8",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "DESENZANO": "8:20",
+     "SIRMIONE": "8:40",
+     "BARDOLINO": "9:20",
+     "GARDA": "9:35"
+    }
+   },
+   {
+    "corsa": "62",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "MALCESINE centro": "8:55",
+     "LIMONE centro": "9:15",
+     "TORBOLE": "9:45",
+     "RIVA": "10:00"
+    }
+   },
+   {
+    "corsa": "72",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "MALCESINE centro": "9:45",
+     "LIMONE centro": "10:10",
+     "TORBOLE": "10:43",
+     "RIVA": "11:00"
+    }
+   },
+   {
+    "corsa": "92",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "PORTESE": "8:38",
+     "SALO": "8:50",
+     "GARDONE": "9:04",
+     "MADERNO": "9:19",
+     "GARGNANO": "9:50",
+     "BRENZONE": "10:20",
+     "LIMONE centro": "11:00"
+    }
+   },
+   {
+    "corsa": "110",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": true,
+    "stops": {
+     "PESCHIERA": "8:50",
+     "SIRMIONE": "9:10",
+     "GARDA": "9:31",
+     "TORRI": "9:45",
+     "SALO": "10:09",
+     "GARDONE": "10:19",
+     "GARGNANO": "10:36",
+     "MALCESINE centro": "10:55",
+     "LIMONE centro": "11:05"
+    }
+   },
+   {
+    "corsa": "82",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "CAMPIONE (Tremosine)": "10:42",
+     "MALCESINE centro": "11:00",
+     "LIMONE centro": "11:20",
+     "RIVA": "11:55"
+    }
+   },
+   {
+    "corsa": "64",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "MALCESINE centro": "11:15",
+     "LIMONE multipiano": "11:43",
+     "TORBOLE": "12:20",
+     "RIVA": "12:35"
+    }
+   },
+   {
+    "corsa": "74",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "MALCESINE centro": "12:25",
+     "LIMONE centro": "12:50",
+     "RIVA": "13:30"
+    }
+   },
+   {
+    "corsa": "22",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "DESENZANO": "8:55",
+     "SIRMIONE": "9:15",
+     "LAZISE": "10:37",
+     "CISANO": "10:25",
+     "BARDOLINO": "10:15",
+     "GARDA": "10:00"
+    }
+   },
+   {
+    "corsa": "2",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "PESCHIERA": "9:10",
+     "LAZISE": "9:38",
+     "CISANO": "9:50",
+     "BARDOLINO": "10:00",
+     "GARDA": "10:15",
+     "PORTESE": "10:57",
+     "SALO": "11:08",
+     "GARDONE": "11:22",
+     "MADERNO": "11:36",
+     "BOGLIACO": "12:01",
+     "GARGNANO": "12:09",
+     "TIGNALE": "12:27",
+     "CAMPIONE (Tremosine)": "12:43",
+     "MALCESINE centro": "13:02",
+     "LIMONE centro": "13:24",
+     "RIVA": "14:00"
+    }
+   },
+   {
+    "corsa": "160",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": true,
+    "stops": {
+     "DESENZANO": "9:20",
+     "GARDA": "9:51",
+     "SALO": "10:21",
+     "GARDONE": "10:33",
+     "GARGNANO": "10:54",
+     "CASTELLETTO": "11:07",
+     "BRENZONE": "11:15",
+     "MALCESINE centro": "11:33",
+     "LIMONE centro": "11:50",
+     "RIVA": "12:15"
+    }
+   },
+   {
+    "corsa": "42",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "SIRMIONE": "9:40",
+     "LAZISE": "10:20",
+     "CISANO": "10:33",
+     "BARDOLINO": "10:43",
+     "GARDA": "11:00"
+    }
+   },
+   {
+    "corsa": "34",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "PESCHIERA": "9:45",
+     "SIRMIONE": "10:25",
+     "GARDA": "11:10"
+    }
+   },
+   {
+    "corsa": "16",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "DESENZANO": "10:15",
+     "SIRMIONE": "10:37",
+     "LAZISE": "11:18",
+     "BARDOLINO": "11:35",
+     "GARDA": "11:51",
+     "PORTESE": "12:33",
+     "GARDONE": "12:44",
+     "MADERNO": "13:00"
+    }
+   },
+   {
+    "corsa": "24",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "PESCHIERA": "11:20",
+     "LAZISE": "11:48",
+     "CISANO": "12:01",
+     "BARDOLINO": "12:11",
+     "GARDA": "12:26",
+     "TORRI": "12:53",
+     "CASTELLETTO": "13:26",
+     "BRENZONE": "13:36",
+     "ASSENZA di Brenzone": "13:47",
+     "MALCESINE centro": "14:05"
+    }
+   },
+   {
+    "corsa": "84",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "MALCESINE centro": "14:10",
+     "LIMONE centro": "14:30"
+    }
+   },
+   {
+    "corsa": "10",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "DESENZANO": "11:30",
+     "SIRMIONE": "11:55",
+     "LAZISE": "12:35",
+     "BARDOLINO": "12:53",
+     "GARDA": "13:10"
+    }
+   },
+   {
+    "corsa": "66",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "MALCESINE centro": "14:30",
+     "LIMONE multipiano": "14:50",
+     "LIMONE centro": "14:58",
+     "TORBOLE": "15:28",
+     "RIVA": "15:45"
+    }
+   },
+   {
+    "corsa": "152",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "DESENZANO": "12:40",
+     "SIRMIONE": "13:00",
+     "GARDA": "13:28"
+    }
+   },
+   {
+    "corsa": "36",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "PESCHIERA": "13:10",
+     "SIRMIONE": "13:56",
+     "LAZISE": "14:45",
+     "CISANO": "14:58",
+     "BARDOLINO": "15:09",
+     "GARDA": "15:25"
+    }
+   },
+   {
+    "corsa": "86",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "MALCESINE centro": "14:55",
+     "LIMONE centro": "15:18",
+     "RIVA": "15:55"
+    }
+   },
+   {
+    "corsa": "76",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "MALCESINE centro": "15:45",
+     "RIVA": "16:40"
+    }
+   },
+   {
+    "corsa": "96",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "PORTESE": "14:15",
+     "SALO": "14:25",
+     "GARDONE": "14:39",
+     "GARGNANO": "15:19",
+     "BRENZONE": "15:48",
+     "LIMONE centro": "16:30"
+    }
+   },
+   {
+    "corsa": "30",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "DESENZANO": "13:45",
+     "SIRMIONE": "14:10",
+     "CISANO": "14:50",
+     "BARDOLINO": "15:00",
+     "GARDA": "15:15",
+     "PORTESE": "16:00",
+     "SALO": "16:15",
+     "GARDONE": "16:30"
+    }
+   },
+   {
+    "corsa": "44",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "PESCHIERA": "14:20",
+     "SIRMIONE": "15:00",
+     "MONIGA": "15:23",
+     "MANERBA (Dusano)": "15:37"
+    }
+   },
+   {
+    "corsa": "112",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "DESENZANO": "14:30",
+     "SIRMIONE": "14:41",
+     "GARDA": "15:03",
+     "SALO": "15:24",
+     "GARDONE": "15:33",
+     "GARGNANO": "15:50",
+     "MALCESINE centro": "16:09",
+     "LIMONE centro": "16:20",
+     "RIVA": "16:45"
+    }
+   },
+   {
+    "corsa": "68",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "MALCESINE centro": "16:35",
+     "LIMONE centro": "16:58",
+     "TORBOLE": "17:30",
+     "RIVA": "17:45"
+    }
+   },
+   {
+    "corsa": "162",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": true,
+    "stops": {
+     "SIRMIONE": "15:37",
+     "BARDOLINO": "16:00",
+     "GARDA": "16:11",
+     "MADERNO": "16:35",
+     "LIMONE centro": "17:15"
+    }
+   },
+   {
+    "corsa": "88",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "ASSENZA di Brenzone": "17:20",
+     "MALCESINE centro": "17:40",
+     "LIMONE centro": "18:00",
+     "RIVA": "18:35"
+    }
+   },
+   {
+    "corsa": "78",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "MALCESINE centro": "18:05",
+     "LIMONE centro": "18:30",
+     "TORBOLE": "19:03",
+     "RIVA": "19:20"
+    }
+   },
+   {
+    "corsa": "70",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "MALCESINE centro": "18:45",
+     "RIVA": "19:30"
+    }
+   },
+   {
+    "corsa": "6",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "DESENZANO": "15:00",
+     "SIRMIONE": "15:22",
+     "GARDA": "16:07",
+     "PORTESE": "16:49",
+     "SALO": "17:00",
+     "GARDONE": "17:13",
+     "MADERNO": "17:26",
+     "BOGLIACO": "17:51",
+     "GARGNANO": "17:58",
+     "TIGNALE": "18:15",
+     "ASSENZA di Brenzone": "18:43",
+     "CAMPIONE (Tremosine)": "18:30",
+     "MALCESINE centro": "19:00",
+     "LIMONE centro": "19:20",
+     "TORBOLE": "19:50",
+     "RIVA": "20:05"
+    }
+   },
+   {
+    "corsa": "12",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "PESCHIERA": "15:30",
+     "LAZISE": "15:58",
+     "CISANO": "16:10",
+     "BARDOLINO": "16:20",
+     "GARDA": "16:35"
+    }
+   },
+   {
+    "corsa": "46",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "DESENZANO": "16:35",
+     "SIRMIONE": "16:58",
+     "MANERBA (Dusano)": "17:21"
+    }
+   },
+   {
+    "corsa": "156",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": true,
+    "stops": {
+     "DESENZANO": "16:40",
+     "PESCHIERA": "16:10",
+     "SIRMIONE": "16:52",
+     "GARDA": "17:14",
+     "SALO": "17:40",
+     "GARDONE": "17:50",
+     "GARGNANO": "18:15",
+     "CASTELLETTO": "18:29",
+     "BRENZONE": "18:37",
+     "MALCESINE centro": "18:53",
+     "LIMONE centro": "19:08",
+     "TORBOLE": "19:26",
+     "RIVA": "19:40"
+    }
+   },
+   {
+    "corsa": "38",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "PESCHIERA": "16:35",
+     "LAZISE": "17:03",
+     "BARDOLINO": "17:20",
+     "GARDA": "17:35"
+    }
+   },
+   {
+    "corsa": "18",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "DESENZANO": "17:10",
+     "SIRMIONE": "17:35",
+     "GARDA": "18:20"
+    }
+   },
+   {
+    "corsa": "98",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "GARDA": "18:25",
+     "PORTESE": "19:05",
+     "SALO": "19:18",
+     "GARDONE": "19:33",
+     "MADERNO": "19:50"
+    }
+   },
+   {
+    "corsa": "26",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "PESCHIERA": "18:00",
+     "LAZISE": "18:29",
+     "CISANO": "18:42",
+     "BARDOLINO": "18:52",
+     "GARDA": "19:10"
+    }
+   },
+   {
+    "corsa": "48",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "DESENZANO": "18:15",
+     "SIRMIONE": "18:35",
+     "MANERBA (Dusano)": "18:58"
+    }
+   },
+   {
+    "corsa": "114",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": true,
+    "stops": {
+     "DESENZANO": "19:00",
+     "PESCHIERA": "19:30",
+     "SIRMIONE": "19:13"
+    }
+   },
+   {
+    "corsa": "90",
+    "direction": "DESENZANO -> RIVA DEL GARDA",
+    "sr": false,
+    "stops": {
+     "MALCESINE centro": "19:45",
+     "RIVA": "20:30"
+    }
+   }
+  ],
+  "RIVA DEL GARDA -> DESENZANO": [
+   {
+    "corsa": "61",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "RIVA": "8:00",
+     "LIMONE multipiano": "8:35",
+     "MALCESINE centro": "8:55"
+    }
+   },
+   {
+    "corsa": "91",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "MADERNO": "8:20",
+     "PORTESE": "8:38"
+    }
+   },
+   {
+    "corsa": "41",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "MANERBA (Dusano)": "8:45",
+     "MONIGA": "9:00",
+     "PADENGHE": "9:14",
+     "SIRMIONE": "9:40"
+    }
+   },
+   {
+    "corsa": "159",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "SIRMIONE": "8:58",
+     "PESCHIERA": "8:30",
+     "DESENZANO": "9:15"
+    }
+   },
+   {
+    "corsa": "33",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "GARDA": "8:35",
+     "BARDOLINO": "8:50",
+     "LAZISE": "9:07",
+     "PESCHIERA": "9:35"
+    }
+   },
+   {
+    "corsa": "15",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "GARDA": "9:00",
+     "BARDOLINO": "8:45",
+     "LAZISE": "8:28",
+     "SIRMIONE": "9:45",
+     "DESENZANO": "10:05"
+    }
+   },
+   {
+    "corsa": "9",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "GARDA": "9:35",
+     "BARDOLINO": "9:50",
+     "CISANO": "9:58",
+     "LAZISE": "10:10",
+     "SIRMIONE": "10:57",
+     "DESENZANO": "11:20"
+    }
+   },
+   {
+    "corsa": "23",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "GARDA": "10:00",
+     "BARDOLINO": "10:15",
+     "CISANO": "10:25",
+     "LAZISE": "10:37",
+     "PESCHIERA": "11:05"
+    }
+   },
+   {
+    "corsa": "151",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": true,
+    "stops": {
+     "RIVA": "8:20",
+     "TORBOLE": "8:27",
+     "LIMONE centro": "8:45",
+     "MALCESINE centro": "8:57",
+     "BRENZONE": "9:13",
+     "GARGNANO": "9:28",
+     "MADERNO": "9:49",
+     "GARDONE": "10:01",
+     "SALO": "10:15",
+     "PORTESE": "10:25",
+     "GARDA": "10:55",
+     "SIRMIONE": "11:25",
+     "DESENZANO": "11:40"
+    }
+   },
+   {
+    "corsa": "29",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "GARDONE": "9:51",
+     "SALO": "10:05",
+     "PORTESE": "10:17",
+     "GARDA": "11:03",
+     "BARDOLINO": "11:18",
+     "LAZISE": "11:37",
+     "SIRMIONE": "12:23",
+     "DESENZANO": "12:45"
+    }
+   },
+   {
+    "corsa": "35",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "GARDA": "11:10",
+     "BARDOLINO": "11:25",
+     "LAZISE": "11:42",
+     "PESCHIERA": "12:10"
+    }
+   },
+   {
+    "corsa": "43",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "GARDA": "11:00",
+     "MANERBA (Dusano)": "11:40",
+     "MONIGA": "11:54",
+     "PADENGHE": "12:08",
+     "SIRMIONE": "12:38",
+     "PESCHIERA": "13:20"
+    }
+   },
+   {
+    "corsa": "71",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "RIVA": "8:40",
+     "LIMONE centro": "9:20",
+     "MALCESINE centro": "9:45"
+    }
+   },
+   {
+    "corsa": "5",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "RIVA": "8:50",
+     "TORBOLE": "9:05",
+     "LIMONE centro": "9:35",
+     "MALCESINE centro": "9:55",
+     "ASSENZA di Brenzone": "10:11",
+     "CAMPIONE (Tremosine)": "10:25",
+     "TIGNALE": "10:40",
+     "GARGNANO": "10:57",
+     "BOGLIACO": "11:04",
+     "MADERNO": "11:30",
+     "GARDONE": "11:43",
+     "SALO": "11:58",
+     "PORTESE": "12:08",
+     "GARDA": "12:50",
+     "SIRMIONE": "13:36",
+     "DESENZANO": "14:00"
+    }
+   },
+   {
+    "corsa": "81",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "RIVA": "9:20",
+     "TORBOLE": "9:35",
+     "LIMONE centro": "10:05",
+     "MALCESINE centro": "10:25",
+     "CAMPIONE (Tremosine)": "10:42"
+    }
+   },
+   {
+    "corsa": "63",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "RIVA": "10:05",
+     "TORBOLE": "10:20",
+     "LIMONE multipiano": "10:53",
+     "MALCESINE centro": "11:15"
+    }
+   },
+   {
+    "corsa": "93",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "LIMONE centro": "11:00",
+     "MALCESINE centro": "11:20",
+     "CASTELLETTO": "11:55",
+     "GARDONE": "12:50",
+     "SALO": "13:05"
+    }
+   },
+   {
+    "corsa": "111",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": true,
+    "stops": {
+     "LIMONE centro": "11:10",
+     "MALCESINE centro": "11:21",
+     "GARDONE": "11:59",
+     "SALO": "12:09",
+     "TORRI": "11:45",
+     "GARDA": "12:29",
+     "BARDOLINO": "12:38",
+     "SIRMIONE": "12:56",
+     "DESENZANO": "13:05"
+    }
+   },
+   {
+    "corsa": "73",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "RIVA": "11:10",
+     "TORBOLE": "11:27",
+     "LIMONE centro": "12:00",
+     "MALCESINE centro": "12:25"
+    }
+   },
+   {
+    "corsa": "83",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "RIVA": "12:00",
+     "TORBOLE": "12:15",
+     "LIMONE centro": "12:45",
+     "MALCESINE centro": "13:05"
+    }
+   },
+   {
+    "corsa": "161",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": true,
+    "stops": {
+     "RIVA": "13:25",
+     "LIMONE centro": "13:45",
+     "MALCESINE centro": "13:59",
+     "MADERNO": "14:35",
+     "GARDONE": "14:47",
+     "SALO": "15:00",
+     "SIRMIONE": "15:32"
+    }
+   },
+   {
+    "corsa": "65",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "RIVA": "13:35",
+     "LIMONE multipiano": "14:10",
+     "MALCESINE centro": "14:30"
+    }
+   },
+   {
+    "corsa": "153",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "GARDA": "13:28",
+     "BARDOLINO": "13:40",
+     "LAZISE": "13:55",
+     "SIRMIONE": "14:25",
+     "PESCHIERA": "15:00"
+    }
+   },
+   {
+    "corsa": "11",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "GARDA": "14:15",
+     "BARDOLINO": "14:31",
+     "CISANO": "14:41",
+     "LAZISE": "14:54",
+     "PESCHIERA": "15:25"
+    }
+   },
+   {
+    "corsa": "45",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "MANERBA (Dusano)": "15:37",
+     "SIRMIONE": "16:02",
+     "DESENZANO": "16:25"
+    }
+   },
+   {
+    "corsa": "155",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": true,
+    "stops": {
+     "PESCHIERA": "16:10",
+     "DESENZANO": "16:35"
+    }
+   },
+   {
+    "corsa": "95",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "SALO": "14:05",
+     "PORTESE": "14:15"
+    }
+   },
+   {
+    "corsa": "17",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "MADERNO": "14:00",
+     "GARDONE": "14:15",
+     "SALO": "14:28",
+     "PORTESE": "14:39",
+     "GARDA": "15:22",
+     "BARDOLINO": "15:37",
+     "LAZISE": "15:54",
+     "SIRMIONE": "16:36",
+     "DESENZANO": "17:05"
+    }
+   },
+   {
+    "corsa": "37",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "GARDA": "15:30",
+     "BARDOLINO": "15:45",
+     "LAZISE": "16:02",
+     "PESCHIERA": "16:30"
+    }
+   },
+   {
+    "corsa": "85",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "LIMONE centro": "14:35",
+     "MALCESINE centro": "14:55"
+    }
+   },
+   {
+    "corsa": "25",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "MALCESINE centro": "15:05",
+     "ASSENZA di Brenzone": "15:22",
+     "BRENZONE": "15:33",
+     "CASTELLETTO": "15:43",
+     "TORRI": "16:15",
+     "GARDA": "16:45",
+     "BARDOLINO": "17:00",
+     "CISANO": "17:10",
+     "LAZISE": "17:25",
+     "PESCHIERA": "17:55"
+    }
+   },
+   {
+    "corsa": "75",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "RIVA": "14:30",
+     "TORBOLE": "14:47",
+     "LIMONE centro": "15:20",
+     "MALCESINE centro": "15:45"
+    }
+   },
+   {
+    "corsa": "47",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "MANERBA (Dusano)": "17:21",
+     "MONIGA": "17:35",
+     "PADENGHE": "17:48",
+     "DESENZANO": "18:10"
+    }
+   },
+   {
+    "corsa": "13",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "GARDA": "16:55",
+     "BARDOLINO": "17:10",
+     "SIRMIONE": "17:55",
+     "DESENZANO": "18:25"
+    }
+   },
+   {
+    "corsa": "39",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "GARDA": "17:35",
+     "SIRMIONE": "18:20",
+     "PESCHIERA": "19:00"
+    }
+   },
+   {
+    "corsa": "31",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "GARDONE": "16:30",
+     "SALO": "16:44",
+     "PORTESE": "16:56",
+     "GARDA": "17:41",
+     "BARDOLINO": "17:56",
+     "LAZISE": "18:14",
+     "SIRMIONE": "18:55",
+     "DESENZANO": "19:20"
+    }
+   },
+   {
+    "corsa": "49",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "MANERBA (Dusano)": "18:58",
+     "MONIGA": "19:12",
+     "PADENGHE": "19:25",
+     "DESENZANO": "19:45"
+    }
+   },
+   {
+    "corsa": "19",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "GARDA": "18:20",
+     "BARDOLINO": "18:35",
+     "LAZISE": "18:52",
+     "PESCHIERA": "19:20"
+    }
+   },
+   {
+    "corsa": "97",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "LIMONE centro": "16:30",
+     "MALCESINE centro": "16:52",
+     "BRENZONE": "17:18",
+     "TORRI": "18:00",
+     "GARDA": "18:25"
+    }
+   },
+   {
+    "corsa": "3",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "RIVA": "15:15",
+     "LIMONE centro": "15:50",
+     "MALCESINE centro": "16:15",
+     "CAMPIONE (Tremosine)": "16:33",
+     "TIGNALE": "16:49",
+     "GARGNANO": "17:07",
+     "BOGLIACO": "17:14",
+     "MADERNO": "17:40",
+     "GARDONE": "17:54",
+     "SALO": "18:08",
+     "PORTESE": "18:19",
+     "GARDA": "19:02",
+     "BARDOLINO": "19:16",
+     "CISANO": "19:25",
+     "LAZISE": "19:38",
+     "PESCHIERA": "20:10"
+    }
+   },
+   {
+    "corsa": "67",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "RIVA": "15:50",
+     "MALCESINE centro": "16:35"
+    }
+   },
+   {
+    "corsa": "87",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "RIVA": "16:05",
+     "LIMONE centro": "16:40",
+     "MALCESINE centro": "17:00",
+     "ASSENZA di Brenzone": "17:20"
+    }
+   },
+   {
+    "corsa": "113",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": true,
+    "stops": {
+     "RIVA": "16:45",
+     "LIMONE centro": "17:10",
+     "MALCESINE centro": "17:21",
+     "GARDONE": "18:07",
+     "SALO": "17:57",
+     "TORRI": "18:22",
+     "BARDOLINO": "18:37",
+     "SIRMIONE": "19:13",
+     "PESCHIERA": "19:30",
+     "DESENZANO": "18:55"
+    }
+   },
+   {
+    "corsa": "163",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": true,
+    "stops": {
+     "LIMONE centro": "17:20",
+     "MALCESINE centro": "17:35",
+     "GARGNANO": "18:01",
+     "MADERNO": "18:20",
+     "GARDONE": "18:32",
+     "GARDA": "18:55",
+     "BARDOLINO": "19:06",
+     "LAZISE": "19:16",
+     "PESCHIERA": "19:35"
+    }
+   },
+   {
+    "corsa": "77",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "RIVA": "16:50",
+     "TORBOLE": "17:07",
+     "LIMONE centro": "17:40",
+     "MALCESINE centro": "18:05"
+    }
+   },
+   {
+    "corsa": "69",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "RIVA": "17:50",
+     "LIMONE centro": "18:25",
+     "MALCESINE centro": "18:45"
+    }
+   },
+   {
+    "corsa": "89",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "RIVA": "18:40",
+     "TORBOLE": "18:55",
+     "LIMONE centro": "19:25",
+     "MALCESINE centro": "19:45"
+    }
+   },
+   {
+    "corsa": "27",
+    "direction": "RIVA DEL GARDA -> DESENZANO",
+    "sr": false,
+    "stops": {
+     "GARDA": "19:10",
+     "BARDOLINO": "18:52",
+     "CISANO": "18:42",
+     "LAZISE": "18:29",
+     "SIRMIONE": "19:55",
+     "DESENZANO": "20:15"
+    }
+   }
+  ]
+ }
+}

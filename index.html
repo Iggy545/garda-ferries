@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Garda Ferries">
+<meta name="theme-color" content="#0b3d5c">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" href="icon.png">
+<title>Garda Ferries</title>
+<style>
+:root {
+  --bg: #f2f4f7;
+  --card: #ffffff;
+  --ink: #14181d;
+  --muted: #6b7480;
+  --line: #dfe3e9;
+  --accent: #0b6ea8;
+  --accent-soft: #e6f1f8;
+  --sr: #b4520a;
+  --sr-soft: #fdeee0;
+  --shadow: 0 1px 2px rgba(16, 24, 40, .06), 0 1px 3px rgba(16, 24, 40, .08);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0e1216;
+    --card: #171d23;
+    --ink: #e8ecf1;
+    --muted: #949daa;
+    --line: #262e37;
+    --accent: #4aa8dd;
+    --accent-soft: #14293a;
+    --sr: #e8a05e;
+    --sr-soft: #33230f;
+    --shadow: none;
+  }
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+.wrap { max-width: 560px; margin: 0 auto; padding: 0 14px 40px; }
+
+header { padding: 18px 2px 12px; }
+h1 { font-size: 20px; margin: 0; letter-spacing: -.01em; }
+header p { margin: 3px 0 0; color: var(--muted); font-size: 13px; }
+
+/* ---- search panel ---- */
+.panel {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px;
+  box-shadow: var(--shadow);
+}
+.row { display: flex; align-items: center; gap: 10px; }
+.row + .row { margin-top: 10px; }
+.field { flex: 1; min-width: 0; }
+label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+  margin: 0 0 4px 2px;
+}
+select, input[type=time] {
+  width: 100%;
+  font: inherit;
+  font-size: 17px;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 10px;
+  min-height: 44px;
+  appearance: none;
+  -webkit-appearance: none;
+}
+input[type=time] { text-align: left; }
+button {
+  font: inherit;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  min-height: 44px;
+  padding: 0 14px;
+  cursor: pointer;
+}
+button:active { background: var(--accent-soft); }
+#swap {
+  align-self: end;
+  width: 44px;
+  padding: 0;
+  font-size: 17px;
+  flex: none;
+}
+#now { flex: none; align-self: end; }
+
+/* ---- results ---- */
+.note {
+  margin: 18px 2px 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-top: 10px;
+  box-shadow: var(--shadow);
+}
+.card.next { border-color: var(--accent); }
+.times {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-variant-numeric: tabular-nums;
+}
+.t { font-size: 25px; font-weight: 600; letter-spacing: -.02em; }
+.arrow { color: var(--muted); font-size: 17px; }
+.dur { margin-left: auto; color: var(--muted); font-size: 14px; }
+.ends { color: var(--muted); font-size: 14px; margin-top: 1px; }
+.meta {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--muted);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+}
+.tag {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.tag.sr { background: var(--sr-soft); color: var(--sr); }
+.tag.now { background: var(--accent); color: #fff; }
+.via { flex-basis: 100%; }
+
+/* legs of a connection with one change */
+.leg { display: flex; gap: 10px; font-size: 14px; padding: 2px 0; }
+.leg .lt { font-variant-numeric: tabular-nums; color: var(--muted); white-space: nowrap; }
+.change {
+  font-size: 13px;
+  color: var(--sr);
+  padding: 4px 0 4px 2px;
+}
+.legs { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line); }
+
+.empty { color: var(--muted); font-size: 14px; padding: 16px 2px; }
+.more {
+  width: 100%;
+  margin-top: 10px;
+  color: var(--accent);
+  background: transparent;
+  border-style: dashed;
+}
+footer { margin-top: 26px; color: var(--muted); font-size: 12px; padding: 0 2px; }
+footer a { color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Garda Ferries</h1>
+  <p id="validity"></p>
+</header>
+
+<div class="panel">
+  <div class="row">
+    <div class="field">
+      <label for="from">From</label>
+      <select id="from"></select>
+    </div>
+    <button id="swap" type="button" title="Swap" aria-label="Swap from and to">⇄</button>
+    <div class="field">
+      <label for="to">To</label>
+      <select id="to"></select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="field">
+      <label for="time">Around</label>
+      <input type="time" id="time">
+    </div>
+    <button id="now" type="button">Now</button>
+  </div>
+</div>
+
+<div id="results"></div>
+
+<footer>
+  Times from the Navigazione Laghi summer 2026 timetable. Check
+  <a href="https://www.navigazionelaghi.it">navigazionelaghi.it</a> before travelling —
+  ships and times can change.
+</footer>
+
+</div>
+
+<script>
+const DATA = {"valid":"2026-05-16 to 2026-10-04","stops":[{"n":"Peschiera","g":"South"},{"n":"Sirmione","g":"South"},{"n":"Desenzano","g":"South"},{"n":"Padenghe","g":"South"},{"n":"Moniga","g":"West shore"},{"n":"Manerba (Dusano)","g":"West shore"},{"n":"Portese","g":"West shore"},{"n":"Salò","g":"West shore"},{"n":"Gardone","g":"West shore"},{"n":"Maderno","g":"West shore"},{"n":"Bogliaco","g":"West shore"},{"n":"Gargnano","g":"West shore"},{"n":"Tignale","g":"West shore"},{"n":"Campione","g":"West shore"},{"n":"Limone (centro)","g":"West shore"},{"n":"Limone (multipiano)","g":"West shore"},{"n":"Riva del Garda","g":"North"},{"n":"Torbole","g":"North"},{"n":"Malcesine","g":"East shore"},{"n":"Assenza","g":"East shore"},{"n":"Brenzone","g":"East shore"},{"n":"Castelletto","g":"East shore"},{"n":"Torri del Benaco","g":"East shore"},{"n":"Garda","g":"East shore"},{"n":"Bardolino","g":"East shore"},{"n":"Cisano","g":"East shore"},{"n":"Lazise","g":"East shore"}],"sailings":[{"c":"14","sr":0,"s":[[0,480],[26,508],[24,525],[23,540]]},{"c":"28","sr":0,"s":[[2,480],[1,500],[4,522],[5,536],[6,566],[7,577],[8,591]]},{"c":"40","sr":0,"s":[[2,495],[5,525]]},{"c":"8","sr":0,"s":[[2,500],[1,520],[24,560],[23,575]]},{"c":"62","sr":0,"s":[[18,535],[14,555],[17,585],[16,600]]},{"c":"72","sr":0,"s":[[18,585],[14,610],[17,643],[16,660]]},{"c":"92","sr":0,"s":[[6,518],[7,530],[8,544],[9,559],[11,590],[20,620],[14,660]]},{"c":"110","sr":1,"s":[[0,530],[1,550],[23,571],[22,585],[7,609],[8,619],[11,636],[18,655],[14,665]]},{"c":"82","sr":0,"s":[[13,642],[18,660],[14,680],[16,715]]},{"c":"64","sr":0,"s":[[18,675],[15,703],[17,740],[16,755]]},{"c":"74","sr":0,"s":[[18,745],[14,770],[16,810]]},{"c":"22","sr":0,"s":[[2,535],[1,555],[23,600],[24,615],[25,625],[26,637]]},{"c":"2","sr":0,"s":[[0,550],[26,578],[25,590],[24,600],[23,615],[6,657],[7,668],[8,682],[9,696],[10,721],[11,729],[12,747],[13,763],[18,782],[14,804],[16,840]]},{"c":"160","sr":1,"s":[[2,560],[23,591],[7,621],[8,633],[11,654],[21,667],[20,675],[18,693],[14,710],[16,735]]},{"c":"42","sr":0,"s":[[1,580],[26,620],[25,633],[24,643],[23,660]]},{"c":"34","sr":0,"s":[[0,585],[1,625],[23,670]]},{"c":"16","sr":0,"s":[[2,615],[1,637],[26,678],[24,695],[23,711],[6,753],[8,764],[9,780]]},{"c":"24","sr":0,"s":[[0,680],[26,708],[25,721],[24,731],[23,746],[22,773],[21,806],[20,816],[19,827],[18,845]]},{"c":"84","sr":0,"s":[[18,850],[14,870]]},{"c":"10","sr":0,"s":[[2,690],[1,715],[26,755],[24,773],[23,790]]},{"c":"66","sr":0,"s":[[18,870],[15,890],[14,898],[17,928],[16,945]]},{"c":"152","sr":0,"s":[[2,760],[1,780],[23,808]]},{"c":"36","sr":0,"s":[[0,790],[1,836],[26,885],[25,898],[24,909],[23,925]]},{"c":"86","sr":0,"s":[[18,895],[14,918],[16,955]]},{"c":"76","sr":0,"s":[[18,945],[16,1000]]},{"c":"96","sr":0,"s":[[6,855],[7,865],[8,879],[11,919],[20,948],[14,990]]},{"c":"30","sr":0,"s":[[2,825],[1,850],[25,890],[24,900],[23,915],[6,960],[7,975],[8,990]]},{"c":"44","sr":0,"s":[[0,860],[1,900],[4,923],[5,937]]},{"c":"112","sr":0,"s":[[2,870],[1,881],[23,903],[7,924],[8,933],[11,950],[18,969],[14,980],[16,1005]]},{"c":"68","sr":0,"s":[[18,995],[14,1018],[17,1050],[16,1065]]},{"c":"162","sr":1,"s":[[1,937],[24,960],[23,971],[9,995],[14,1035]]},{"c":"88","sr":0,"s":[[19,1040],[18,1060],[14,1080],[16,1115]]},{"c":"78","sr":0,"s":[[18,1085],[14,1110],[17,1143],[16,1160]]},{"c":"70","sr":0,"s":[[18,1125],[16,1170]]},{"c":"6","sr":0,"s":[[2,900],[1,922],[23,967],[6,1009],[7,1020],[8,1033],[9,1046],[10,1071],[11,1078],[12,1095],[13,1110],[19,1123],[18,1140],[14,1160],[17,1190],[16,1205]]},{"c":"12","sr":0,"s":[[0,930],[26,958],[25,970],[24,980],[23,995]]},{"c":"46","sr":0,"s":[[2,995],[1,1018],[5,1041]]},{"c":"156","sr":1,"s":[[0,970],[2,1000],[1,1012],[23,1034],[7,1060],[8,1070],[11,1095],[21,1109],[20,1117],[18,1133],[14,1148],[17,1166],[16,1180]]},{"c":"38","sr":0,"s":[[0,995],[26,1023],[24,1040],[23,1055]]},{"c":"18","sr":0,"s":[[2,1030],[1,1055],[23,1100]]},{"c":"98","sr":0,"s":[[23,1105],[6,1145],[7,1158],[8,1173],[9,1190]]},{"c":"26","sr":0,"s":[[0,1080],[26,1109],[25,1122],[24,1132],[23,1150]]},{"c":"48","sr":0,"s":[[2,1095],[1,1115],[5,1138]]},{"c":"114","sr":1,"s":[[2,1140],[1,1153],[0,1170]]},{"c":"90","sr":0,"s":[[18,1185],[16,1230]]},{"c":"61","sr":0,"s":[[16,480],[15,515],[18,535]]},{"c":"91","sr":0,"s":[[9,500],[6,518]]},{"c":"41","sr":0,"s":[[5,525],[4,540],[3,554],[1,580]]},{"c":"159","sr":0,"s":[[0,510],[1,538],[2,555]]},{"c":"33","sr":0,"s":[[23,515],[24,530],[26,547],[0,575]]},{"c":"15","sr":0,"s":[[26,508],[24,525],[23,540],[1,585],[2,605]]},{"c":"9","sr":0,"s":[[23,575],[24,590],[25,598],[26,610],[1,657],[2,680]]},{"c":"23","sr":0,"s":[[23,600],[24,615],[25,625],[26,637],[0,665]]},{"c":"151","sr":1,"s":[[16,500],[17,507],[14,525],[18,537],[20,553],[11,568],[9,589],[8,601],[7,615],[6,625],[23,655],[1,685],[2,700]]},{"c":"29","sr":0,"s":[[8,591],[7,605],[6,617],[23,663],[24,678],[26,697],[1,743],[2,765]]},{"c":"35","sr":0,"s":[[23,670],[24,685],[26,702],[0,730]]},{"c":"43","sr":0,"s":[[23,660],[5,700],[4,714],[3,728],[1,758],[0,800]]},{"c":"71","sr":0,"s":[[16,520],[14,560],[18,585]]},{"c":"5","sr":0,"s":[[16,530],[17,545],[14,575],[18,595],[19,611],[13,625],[12,640],[11,657],[10,664],[9,690],[8,703],[7,718],[6,728],[23,770],[1,816],[2,840]]},{"c":"81","sr":0,"s":[[16,560],[17,575],[14,605],[18,625],[13,642]]},{"c":"63","sr":0,"s":[[16,605],[17,620],[15,653],[18,675]]},{"c":"93","sr":0,"s":[[14,660],[18,680],[21,715],[8,770],[7,785]]},{"c":"111","sr":1,"s":[[14,670],[18,681],[22,705],[8,719],[7,729],[23,749],[24,758],[1,776],[2,785]]},{"c":"73","sr":0,"s":[[16,670],[17,687],[14,720],[18,745]]},{"c":"83","sr":0,"s":[[16,720],[17,735],[14,765],[18,785]]},{"c":"161","sr":1,"s":[[16,805],[14,825],[18,839],[9,875],[8,887],[7,900],[1,932]]},{"c":"65","sr":0,"s":[[16,815],[15,850],[18,870]]},{"c":"153","sr":0,"s":[[23,808],[24,820],[26,835],[1,865],[0,900]]},{"c":"11","sr":0,"s":[[23,855],[24,871],[25,881],[26,894],[0,925]]},{"c":"45","sr":0,"s":[[5,937],[1,962],[2,985]]},{"c":"155","sr":1,"s":[[0,970],[2,995]]},{"c":"95","sr":0,"s":[[7,845],[6,855]]},{"c":"17","sr":0,"s":[[9,840],[8,855],[7,868],[6,879],[23,922],[24,937],[26,954],[1,996],[2,1025]]},{"c":"37","sr":0,"s":[[23,930],[24,945],[26,962],[0,990]]},{"c":"85","sr":0,"s":[[14,875],[18,895]]},{"c":"25","sr":0,"s":[[18,905],[19,922],[20,933],[21,943],[22,975],[23,1005],[24,1020],[25,1030],[26,1045],[0,1075]]},{"c":"75","sr":0,"s":[[16,870],[17,887],[14,920],[18,945]]},{"c":"47","sr":0,"s":[[5,1041],[4,1055],[3,1068],[2,1090]]},{"c":"13","sr":0,"s":[[23,1015],[24,1030],[1,1075],[2,1105]]},{"c":"39","sr":0,"s":[[23,1055],[1,1100],[0,1140]]},{"c":"31","sr":0,"s":[[8,990],[7,1004],[6,1016],[23,1061],[24,1076],[26,1094],[1,1135],[2,1160]]},{"c":"49","sr":0,"s":[[5,1138],[4,1152],[3,1165],[2,1185]]},{"c":"19","sr":0,"s":[[23,1100],[24,1115],[26,1132],[0,1160]]},{"c":"97","sr":0,"s":[[14,990],[18,1012],[20,1038],[22,1080],[23,1105]]},{"c":"3","sr":0,"s":[[16,915],[14,950],[18,975],[13,993],[12,1009],[11,1027],[10,1034],[9,1060],[8,1074],[7,1088],[6,1099],[23,1142],[24,1156],[25,1165],[26,1178],[0,1210]]},{"c":"67","sr":0,"s":[[16,950],[18,995]]},{"c":"87","sr":0,"s":[[16,965],[14,1000],[18,1020],[19,1040]]},{"c":"113","sr":1,"s":[[16,1005],[14,1030],[18,1041],[7,1077],[8,1087],[22,1102],[24,1117],[2,1135],[1,1153],[0,1170]]},{"c":"163","sr":1,"s":[[14,1040],[18,1055],[11,1081],[9,1100],[8,1112],[23,1135],[24,1146],[26,1156],[0,1175]]},{"c":"77","sr":0,"s":[[16,1010],[17,1027],[14,1060],[18,1085]]},{"c":"69","sr":0,"s":[[16,1070],[14,1105],[18,1125]]},{"c":"89","sr":0,"s":[[16,1120],[17,1135],[14,1165],[18,1185]]},{"c":"27","sr":0,"s":[[26,1109],[25,1122],[24,1132],[23,1150],[1,1195],[2,1215]]}]};
+
+const MIN_TRANSFER = 10;   // minutes needed to change boat
+const MAX_WAIT = 180;      // ignore connections that leave you waiting longer
+const BEFORE = 2;          // sailings shown before the chosen time
+const AFTER = 4;           // sailings shown after it
+
+const $ = (id) => document.getElementById(id);
+const fromSel = $("from"), toSel = $("to"), timeInput = $("time"), results = $("results");
+
+/* ---------- timetable lookups ---------- */
+
+// Journeys on a single boat: A and B on the same sailing, A called first.
+function findDirect(a, b) {
+  const out = [];
+  for (const sailing of DATA.sailings) {
+    const i = sailing.s.findIndex((call) => call[0] === a);
+    if (i < 0) continue;
+    const j = sailing.s.findIndex((call, k) => k > i && call[0] === b);
+    if (j < 0) continue;
+    out.push({
+      dep: sailing.s[i][1],
+      arr: sailing.s[j][1],
+      corsa: sailing.c,
+      sr: sailing.sr,
+      via: sailing.s.slice(i + 1, j).map((call) => DATA.stops[call[0]].n),
+    });
+  }
+  return out.sort((x, y) => x.dep - y.dep || x.arr - y.arr);
+}
+
+// Journeys with exactly one change, at any stop both boats call at.
+function findOneChange(a, b) {
+  const found = [];
+  for (const first of DATA.sailings) {
+    const i = first.s.findIndex((call) => call[0] === a);
+    if (i < 0) continue;
+    for (let m = i + 1; m < first.s.length; m++) {
+      const via = first.s[m][0];
+      if (via === b) continue;              // that would be a direct journey
+      const readyAt = first.s[m][1] + MIN_TRANSFER;
+      for (const second of DATA.sailings) {
+        if (second === first) continue;
+        const j = second.s.findIndex((call) => call[0] === via && call[1] >= readyAt);
+        if (j < 0) continue;
+        if (second.s[j][1] - first.s[m][1] > MAX_WAIT) continue;
+        const k = second.s.findIndex((call, n) => n > j && call[0] === b);
+        if (k < 0) continue;
+        found.push({
+          dep: first.s[i][1],
+          arr: second.s[k][1],
+          via: DATA.stops[via].n,
+          wait: second.s[j][1] - first.s[m][1],
+          legs: [
+            { dep: first.s[i][1], arr: first.s[m][1], corsa: first.c, sr: first.sr,
+              from: a, to: via },
+            { dep: second.s[j][1], arr: second.s[k][1], corsa: second.c, sr: second.sr,
+              from: via, to: b },
+          ],
+        });
+      }
+    }
+  }
+  // Keep only the options that are not beaten outright: for a given departure,
+  // a later start that still arrives sooner makes the earlier one pointless.
+  found.sort((x, y) => y.dep - x.dep || x.arr - y.arr);
+  const best = [];
+  let bestArr = Infinity;
+  for (const option of found) {
+    if (option.arr < bestArr) { best.push(option); bestArr = option.arr; }
+  }
+  return best.reverse();
+}
+
+/* ---------- formatting ---------- */
+
+const hhmm = (m) => String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0");
+
+function duration(m) {
+  const h = Math.floor(m / 60), rest = m % 60;
+  return h ? (rest ? `${h}h ${rest}m` : `${h}h`) : `${rest}m`;
+}
+
+const escape = (s) => s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+
+/* ---------- rendering ---------- */
+
+// Pick the sailings around the chosen time: a couple before, a few after.
+function slice(list, target) {
+  const first = list.findIndex((x) => x.dep >= target);
+  if (first < 0) return { shown: list.slice(-BEFORE - 1), nextIndex: -1 };
+  const start = Math.max(0, first - BEFORE);
+  return { shown: list.slice(start, first + AFTER), nextIndex: first - start };
+}
+
+function directCard(journey, isNext, fromName, toName) {
+  const tags = [];
+  if (isNext) tags.push('<span class="tag now">next</span>');
+  if (journey.sr) tags.push('<span class="tag sr">SR supplement</span>');
+  tags.push(`<span>corsa ${escape(journey.corsa)}</span>`);
+  const via = journey.via.length
+    ? `<span class="via">via ${journey.via.map(escape).join(" · ")}</span>`
+    : `<span class="via">non-stop</span>`;
+  return `<div class="card${isNext ? " next" : ""}">
+    <div class="times">
+      <span class="t">${hhmm(journey.dep)}</span>
+      <span class="arrow">→</span>
+      <span class="t">${hhmm(journey.arr)}</span>
+      <span class="dur">${duration(journey.arr - journey.dep)}</span>
+    </div>
+    <div class="ends">${escape(fromName)} → ${escape(toName)}</div>
+    <div class="meta">${tags.join("")}${via}</div>
+  </div>`;
+}
+
+function changeCard(journey, isNext) {
+  const leg = (l) => `<div class="leg">
+      <span class="lt">${hhmm(l.dep)} → ${hhmm(l.arr)}</span>
+      <span>${escape(DATA.stops[l.from].n)} → ${escape(DATA.stops[l.to].n)}
+        <span style="color:var(--muted)">· corsa ${escape(l.corsa)}${l.sr ? " · SR" : ""}</span></span>
+    </div>`;
+  return `<div class="card${isNext ? " next" : ""}">
+    <div class="times">
+      <span class="t">${hhmm(journey.dep)}</span>
+      <span class="arrow">→</span>
+      <span class="t">${hhmm(journey.arr)}</span>
+      <span class="dur">${duration(journey.arr - journey.dep)}</span>
+    </div>
+    <div class="ends">${isNext ? '<span class="tag now">next</span> ' : ""}1 change at ${escape(journey.via)}</div>
+    <div class="legs">
+      ${leg(journey.legs[0])}
+      <div class="change">↳ ${duration(journey.wait)} wait at ${escape(journey.via)}</div>
+      ${leg(journey.legs[1])}
+    </div>
+  </div>`;
+}
+
+let showChanges = false;
+
+function render() {
+  const a = Number(fromSel.value), b = Number(toSel.value);
+  localStorage.setItem("garda", JSON.stringify({ a, b }));
+
+  if (a === b) {
+    results.innerHTML = `<p class="empty">Pick two different stops.</p>`;
+    return;
+  }
+
+  const [h, m] = (timeInput.value || "00:00").split(":");
+  const target = Number(h) * 60 + Number(m);
+  const fromName = DATA.stops[a].n, toName = DATA.stops[b].n;
+
+  const direct = findDirect(a, b);
+  let html = "";
+
+  if (direct.length) {
+    const { shown, nextIndex } = slice(direct, target);
+    html += `<p class="note">${direct.length} direct sailing${direct.length > 1 ? "s" : ""} a day${
+      nextIndex < 0 ? " — none left after this time, showing the last ones" : ""}</p>`;
+    html += shown.map((j, i) => directCard(j, i === nextIndex, fromName, toName)).join("");
+    html += `<button class="more" type="button" id="toggle">${
+      showChanges ? "Hide routes with a change" : "Also show routes with a change"}</button>`;
+  }
+
+  if (!direct.length || showChanges) {
+    const changes = findOneChange(a, b);
+    if (!changes.length) {
+      html += `<p class="empty">No route from ${escape(fromName)} to ${escape(toName)}${
+        direct.length ? " with a change" : ""}, direct or with one change.</p>`;
+    } else {
+      const { shown, nextIndex } = slice(changes, target);
+      html += `<p class="note">${direct.length ? "With one change" : "No direct sailing — with one change"}</p>`;
+      html += shown.map((j, i) => changeCard(j, i === nextIndex && !direct.length)).join("");
+    }
+  }
+
+  results.innerHTML = html;
+  const toggle = $("toggle");
+  if (toggle) toggle.onclick = () => { showChanges = !showChanges; render(); };
+}
+
+/* ---------- setup ---------- */
+
+function fillSelect(select, selected) {
+  let group = null, html = "";
+  DATA.stops.forEach((stop, i) => {
+    if (stop.g !== group) {
+      if (group !== null) html += "</optgroup>";
+      html += `<optgroup label="${stop.g}">`;
+      group = stop.g;
+    }
+    html += `<option value="${i}"${i === selected ? " selected" : ""}>${escape(stop.n)}</option>`;
+  });
+  select.innerHTML = html + "</optgroup>";
+}
+
+function setNow() {
+  const d = new Date();
+  timeInput.value = String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+}
+
+$("validity").textContent = "Summer timetable · " + DATA.valid.replace(" to ", " – ");
+
+const saved = JSON.parse(localStorage.getItem("garda") || "null") || {};
+const defaultFrom = DATA.stops.findIndex((s) => s.n === "Desenzano");
+const defaultTo = DATA.stops.findIndex((s) => s.n === "Riva del Garda");
+fillSelect(fromSel, saved.a ?? defaultFrom);
+fillSelect(toSel, saved.b ?? defaultTo);
+setNow();
+
+fromSel.onchange = toSel.onchange = timeInput.onchange = () => { showChanges = false; render(); };
+$("now").onclick = () => { setNow(); showChanges = false; render(); };
+$("swap").onclick = () => {
+  const a = fromSel.value;
+  fromSel.value = toSel.value;
+  toSel.value = a;
+  showChanges = false;
+  render();
+};
+// Coming back to the app after a while should not show a stale "next" boat.
+document.addEventListener("visibilitychange", () => { if (!document.hidden) { setNow(); render(); } });
+
+render();
+</script>
+</body>
+</html>

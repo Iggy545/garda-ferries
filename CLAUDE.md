@@ -15,6 +15,7 @@ and no tests beyond checking results against the source PDF.
 | `build.py` | Bakes the JSON into the template and writes `index.html`. |
 | `make_icon.py` | Draws `icon.png`, the home-screen icon, with zlib only. |
 | `index.html`, `icon.png` | **Generated. Never edit these directly** — the next build overwrites them. |
+| `CHANGELOG.md` | Running history of changes. Keep it current — see below. |
 
 ## Working on it
 
@@ -26,6 +27,11 @@ python build.py
 
 `make_icon.py` only needs re-running if the icon design changes. Python 3 is the
 only requirement; both scripts use the standard library.
+
+**Record anything a user would notice in `CHANGELOG.md` before committing** — a new
+feature, changed behaviour, a fixed wrong result, corrected times. Put it under
+*Unreleased*, and rename that heading to the date when it gets pushed. Internal
+refactoring that changes nothing visible does not need an entry.
 
 To see it in a browser: `python -m http.server 8731` and open `localhost:8731`.
 A `.claude/launch.json` is set up for the Browser pane preview.

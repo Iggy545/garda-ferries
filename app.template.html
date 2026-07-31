@@ -353,6 +353,16 @@ button:active { background: var(--accent-soft); }
 }
 #map .from .dot, #map .to .dot { fill: var(--accent); stroke: var(--accent); }
 #map .from text, #map .to text { fill: var(--ink); font-weight: 650; }
+#map .calling .dot { stroke: var(--route); }
+#map .calling text { fill: var(--ink); }
+#map .when { fill: var(--route); font-weight: 650; }
+
+/* what the timetable says about bikes and step-free access */
+.tag.acc { background: var(--bg); color: var(--muted); font-weight: 500; }
+.tag.acc.ok { background: var(--accent-soft); color: var(--mine); }
+.tag.acc.maybe { background: var(--sr-soft); color: var(--sr); }
+.tag.acc.no { background: var(--bg); color: var(--muted); text-decoration: line-through; }
+.legacc { display: inline-flex; gap: 5px; vertical-align: middle; }
 .more {
   width: 100%;
   margin-top: 10px;
@@ -459,6 +469,7 @@ function findDirect(a, b) {
       sr: sailing.sr,
       via: sailing.s.slice(i + 1, j).map((call) => DATA.stops[call[0]].n),
       calls: sailing.s.slice(i, j + 1),
+      bike: sailing.b, chair: sailing.w,
     });
   }
   return out.sort((x, y) => x.dep - y.dep || x.arr - y.arr);
@@ -488,9 +499,11 @@ function findOneChange(a, b) {
           wait: second.s[j][1] - first.s[m][1],
           legs: [
             { dep: first.s[i][1], arr: first.s[m][1], corsa: first.c, sr: first.sr,
-              from: a, to: via, calls: first.s.slice(i, m + 1) },
+              from: a, to: via, calls: first.s.slice(i, m + 1),
+              bike: first.b, chair: first.w },
             { dep: second.s[j][1], arr: second.s[k][1], corsa: second.c, sr: second.sr,
-              from: via, to: b, calls: second.s.slice(j, k + 1) },
+              from: via, to: b, calls: second.s.slice(j, k + 1),
+              bike: second.b, chair: second.w },
           ],
         });
       }
@@ -554,11 +567,29 @@ function callList(calls) {
   </details>`;
 }
 
+// What the printed timetable says about bikes and step-free access on a sailing.
+const BIKE = { yes: ["ok", "ok"], limited: ["if room", "maybe"], no: ["no bikes", "no"] };
+const CHAIR = { yes: ["step-free", "ok"], ask: ["ask first", "maybe"] };
+
+function access(sailing) {
+  const marks = [];
+  if (BIKE[sailing.bike]) {
+    const [label, tone] = BIKE[sailing.bike];
+    marks.push(`<span class="tag acc ${tone}">🚲 ${label}</span>`);
+  }
+  if (CHAIR[sailing.chair]) {
+    const [label, tone] = CHAIR[sailing.chair];
+    marks.push(`<span class="tag acc ${tone}">♿ ${label}</span>`);
+  }
+  return marks.join("");
+}
+
 function directCard(journey, isNext, isLast) {
   const tags = [];
   if (isNext) tags.push('<span class="tag now">next</span>');
   if (isLast) tags.push('<span class="tag last">last boat</span>');
   if (journey.sr) tags.push('<span class="tag sr">SR supplement</span>');
+  tags.push(access(journey));
   tags.push(`<span>corsa ${escape(journey.corsa)}</span>`);
   return `<div class="card${isNext ? " next" : ""}">
     <div class="times" data-dep="${journey.dep}" data-corsa="${escape(journey.corsa)}">
@@ -577,6 +608,7 @@ function changeCard(journey, isNext, isLast) {
       <span class="lt">${hhmm(l.dep)} → ${hhmm(l.arr)}</span>
       <span>${escape(DATA.stops[l.from].n)} → ${escape(DATA.stops[l.to].n)}
         <span style="color:var(--muted)">· corsa ${escape(l.corsa)}${l.sr ? " · SR" : ""}</span>
+        <span class="legacc">${access(l)}</span>
         ${callList(l.calls)}</span>
     </div>`;
   return `<div class="card${isNext ? " next" : ""}">
@@ -827,6 +859,7 @@ function renderMap() {
   // always tell the same story. Picking by time instead drew a different sailing's
   // route — one that skipped stops the highlighted boat really calls at.
   let route = "";
+  const callTimes = new Map();   // stop index → when the drawn sailing gets there
   if (a !== b) {
     const direct = findDirect(a, b);
     const mine = spotlit();
@@ -834,6 +867,7 @@ function renderMap() {
       || direct.find((j) => j.dep >= target)
       || direct[direct.length - 1];
     if (journey) {
+      for (const [stop, when] of journey.calls) callTimes.set(stop, when);
       const xy = journey.calls.map((call) => GEO.pts[call[0]].slice(0, 2));
       route = `<polyline class="route" points="${xy.map((p) => p.join(",")).join(" ")}"/>`;
       // An arrowhead partway along each leg, so which way the boat is going is
@@ -850,15 +884,19 @@ function renderMap() {
 
   const marks = GEO.pts.map(([x, y, side, labelY], i) => {
     const role = i === a ? "from" : i === b ? "to" : "";
+    const calling = callTimes.has(i);
     const tx = x + side * 12;
     const leader = Math.abs(labelY - y) > 3
       ? `<line class="leader" x1="${x + side * 5}" y1="${y}" x2="${tx}" y2="${labelY - 4}"/>`
       : "";
-    return `<g class="stop ${role}" data-stop="${i}">
+    // Stops the boat calls at carry the time it gets there, so the map answers
+    // "when does it reach Malcesine" without going back to the timetable.
+    const when = calling ? `<tspan class="when"> ${hhmm(callTimes.get(i))}</tspan>` : "";
+    return `<g class="stop ${role}${calling ? " calling" : ""}" data-stop="${i}">
       ${leader}
       <circle class="dot" cx="${x}" cy="${y}" r="${role ? 6 : 4.5}"/>
       <text x="${tx}" y="${labelY}" text-anchor="${side < 0 ? "end" : "start"}"
-        >${escape(DATA.stops[i].n)}</text>
+        >${escape(DATA.stops[i].n)}${when}</text>
       <circle class="hit" cx="${x}" cy="${y}" r="15"/>
     </g>`;
   }).join("");

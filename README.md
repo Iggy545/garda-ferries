@@ -28,6 +28,9 @@ signal — which is the point, on the lake.
   calls — handy for getting off partway, or judging where the boat has got to.
 - **A map tab.** The real lake and all 27 piers. Tap a stop to set your start, tap
   another for the destination. Your sailing is traced across the water.
+- **Bikes and step-free access.** Each sailing says whether bikes are welcome, carried
+  only if there is room, or not carried, and whether it is step-free or worth asking
+  first. Read out of the printed timetable's symbols.
 - **Swap button** for the trip back.
 
 Of the 702 possible stop-to-stop combinations, 498 have a direct sailing, 175 more work
@@ -43,6 +46,9 @@ That bakes `garda-ferry-2026-summer.json` into `app.template.html` and writes
 `index.html`. Python 3, standard library only, and no network — the map geography is
 committed in `garda-geography.json`. Refresh that with `python fetch_geo.py` if a stop
 changes. See `CLAUDE.md` for how the search works and what to watch out for.
+
+The bicycle and wheelchair marks come from the PDF itself via `python extract_symbols.py`,
+which is likewise only needed if the timetable is replaced.
 
 Map data © OpenStreetMap contributors, licensed ODbL.
 

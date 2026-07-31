@@ -12,6 +12,21 @@ which lines moved.
 
 Nothing yet.
 
+## 1.5 — 2026-07-31
+
+### Added
+
+- **Bicycle and wheelchair information, at last.** Every sailing now says whether
+  bikes are welcome, carried only if there is room, or not carried, and whether it is
+  step-free or you should ask before travelling. This was the long-standing gap: the
+  marks are vector drawings in the PDF, not text, so the original transcription could
+  not see them. `extract_symbols.py` now reads them straight from the artwork — the
+  state is carried by the fill colours, a red ring meaning no bikes, a yellow disc
+  meaning limited — and matches each to its column. All 93 sailings are covered.
+- **Times along the route on the map.** Each stop the highlighted sailing calls at
+  now shows the time it gets there, in red beside the stop name, so the map answers
+  "when does it reach Malcesine" without going back to the timetable.
+
 ## 1.4 — 2026-07-31
 
 ### Fixed

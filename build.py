@@ -18,11 +18,12 @@ import sys
 # Bump this when something user-visible changes, and give the same number a heading
 # in CHANGELOG.md. The build date beside it in the app is what actually tells you
 # whether the phone has picked up a new copy.
-VERSION = "1.4"
+VERSION = "1.5"
 
 HERE = pathlib.Path(__file__).parent
 SOURCE = HERE / "garda-ferry-2026-summer.json"
 GEO_FILE = HERE / "garda-geography.json"
+SYMBOLS = HERE / "garda-symbols.json"
 TEMPLATE = HERE / "app.template.html"
 OUTPUT = HERE / "index.html"
 
@@ -158,9 +159,12 @@ def main():
         for _, label in group
     ]
 
+    symbols = json.loads(SYMBOLS.read_text(encoding="utf-8"))["corse"]
+
     sailings = []
     seen_stops = set()
     reordered = []
+    unmarked = []
     for direction, entries in timetable["directions"].items():
         for sailing in entries:
             calls = []
@@ -176,15 +180,23 @@ def main():
             in_time_order = sorted(calls, key=lambda call: call[1])
             if in_time_order != calls:
                 reordered.append(sailing["corsa"])
+            marks = symbols.get(sailing["corsa"])
+            if not marks:
+                unmarked.append(sailing["corsa"])
             sailings.append({
                 "c": sailing["corsa"],
                 "sr": 1 if sailing["sr"] else 0,
                 "s": in_time_order,
+                "b": (marks or {}).get("bike"),
+                "w": (marks or {}).get("chair"),
             })
 
     unused = set(index_of) - seen_stops
     if unused:
         sys.exit(f"GEOGRAPHY lists stops absent from the timetable: {sorted(unused)}")
+    if unmarked:
+        sys.exit(f"No bicycle/wheelchair marks for corse {sorted(unmarked, key=int)} — "
+                 f"re-run extract_symbols.py")
 
     data = {
         "valid": timetable["valid"],

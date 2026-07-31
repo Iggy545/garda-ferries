@@ -1,0 +1,386 @@
+{
+ "source": "Orari-Orizzontali-Web-Estate-2026.pdf, per-column bicycle and wheelchair marks",
+ "bike": {
+  "yes": "bikes welcome",
+  "limited": "bikes if there is room",
+  "no": "bikes not carried"
+ },
+ "chair": {
+  "yes": "step-free, recommended",
+  "ask": "ask before travelling"
+ },
+ "corse": {
+  "2": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "3": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "5": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "6": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "8": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "9": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "10": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "11": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "12": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "13": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "14": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "15": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "16": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "17": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "18": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "19": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "22": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "23": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "24": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "25": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "26": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "27": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "28": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "29": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "30": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "31": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "33": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "34": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "35": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "36": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "37": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "38": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "39": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "40": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "41": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "42": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "43": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "44": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "45": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "46": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "47": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "48": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "49": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "61": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "62": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "63": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "64": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "65": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "66": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "67": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "68": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "69": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "70": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "71": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "72": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "73": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "74": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "75": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "76": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "77": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "78": {
+   "bike": "yes",
+   "chair": "yes"
+  },
+  "81": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "82": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "83": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "84": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "85": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "86": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "87": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "88": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "89": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "90": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "91": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "92": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "93": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "95": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "96": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "97": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "98": {
+   "bike": "limited",
+   "chair": "ask"
+  },
+  "110": {
+   "bike": "no",
+   "chair": "ask"
+  },
+  "111": {
+   "bike": "no",
+   "chair": "ask"
+  },
+  "112": {
+   "bike": "no",
+   "chair": "ask"
+  },
+  "113": {
+   "bike": "no",
+   "chair": "ask"
+  },
+  "114": {
+   "bike": "no",
+   "chair": "ask"
+  },
+  "151": {
+   "bike": "no",
+   "chair": "ask"
+  },
+  "152": {
+   "bike": "no",
+   "chair": "ask"
+  },
+  "153": {
+   "bike": "no",
+   "chair": "ask"
+  },
+  "155": {
+   "bike": "no",
+   "chair": "ask"
+  },
+  "156": {
+   "bike": "no",
+   "chair": "ask"
+  },
+  "159": {
+   "bike": "no",
+   "chair": "ask"
+  },
+  "160": {
+   "bike": "no",
+   "chair": "ask"
+  },
+  "161": {
+   "bike": "no",
+   "chair": "ask"
+  },
+  "162": {
+   "bike": "no",
+   "chair": "ask"
+  },
+  "163": {
+   "bike": "no",
+   "chair": "ask"
+  }
+ }
+}

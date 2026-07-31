@@ -15,6 +15,8 @@ and no tests beyond checking results against the source PDF.
 | `app.template.html` | The whole app — markup, CSS, search logic. Edited by hand. |
 | `build.py` | Bakes the JSON into the template and writes `index.html`. |
 | `fetch_geo.py` | Refreshes `garda-geography.json` from OpenStreetMap. The only part needing a network. |
+| `garda-symbols.json` | Bicycle and wheelchair marks per sailing. **Generated, but committed.** |
+| `extract_symbols.py` | Reads those marks out of the PDF's vector artwork. |
 | `make_icon.py` | Draws `icon.png`, the home-screen icon, with zlib only. |
 | `index.html`, `icon.png` | **Generated. Never edit these directly** — the next build overwrites them. |
 | `CHANGELOG.md` | Running history of changes. Keep it current — see below. |
@@ -87,6 +89,33 @@ SVG units (~130 m) of the drawn shoreline, and the drawing is 1.74 times taller 
 wide, matching the real 50 km by 28 km. If a change breaks the projection those
 numbers move immediately.
 
+## The bicycle and wheelchair marks
+
+`extract_symbols.py` reads them out of the PDF and writes `garda-symbols.json`, which
+is **committed**; `build.py` reads that and fails loudly if a sailing has no marks.
+Re-run the extractor only if the PDF is replaced.
+
+The marks are vector drawings, not characters, so none of this can be done with text
+extraction. Three things make it work, and all three are easy to break:
+
+- **The state is in the fill colours,** not the shape — the same bicycle artwork
+  appears three times. A red ring means bikes are not carried, a yellow disc means
+  only if there is room, white-and-black means welcome. Wheelchairs are navy for
+  step-free and grey for ask-first.
+- **A page's content is spread over several streams**, and the disc a bicycle sits on
+  is often drawn in a *different* stream from the bicycle — sometimes an earlier one.
+  The graphics state carries across them, so a page's streams are concatenated and
+  walked as one. Walking them separately loses the colour, which loses the meaning.
+- **Columns are matched by position, not by the numbers printed above them.** The
+  corsa numbers are drawn with kerned advances the text matrix never records, so their
+  x coordinates are useless; the marks themselves are evenly spaced and get zipped
+  against the corsa numbers in the order the PDF draws them. The extractor refuses to
+  write anything if the column count and the corsa count disagree.
+
+The check that this landed correctly is that **all 11 SR sailings come out as
+no-bikes and ask-first**, which is true of the real boats — fast services carry no
+bikes. A column misaligned by one breaks it immediately, so keep that test.
+
 ## Things that will bite you
 
 - **The JSON stores nine sailings in the PDF's printed row order, not call order** —
@@ -104,8 +133,6 @@ numbers move immediately.
 - The timetable has **no weekday/weekend variation** — confirmed against the PDF legend,
   which only carries SR, bicycle and wheelchair symbols. Do not add day-of-week logic
   without re-checking the source.
-- Bicycle and wheelchair symbols from the PDF were **not** captured in the JSON, so the
-  app cannot show them. Adding them means re-extracting from the PDF.
 
 ## Next season
 

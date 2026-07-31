@@ -353,6 +353,9 @@ button:active { background: var(--accent-soft); }
 }
 #map .from .dot, #map .to .dot { fill: var(--accent); stroke: var(--accent); }
 #map .from text, #map .to text { fill: var(--ink); font-weight: 650; }
+#map .plate-k { font-size: 15px; fill: var(--muted); letter-spacing: 3px; }
+#map .plate-n { font-size: 66px; font-weight: 700; fill: var(--route); letter-spacing: -2px; }
+#map .plate-s { font-size: 15px; fill: var(--muted); font-variant-numeric: tabular-nums; }
 #map .calling .dot { stroke: var(--route); }
 #map .calling text { fill: var(--ink); }
 #map .when { fill: var(--route); font-weight: 650; }
@@ -859,6 +862,7 @@ function renderMap() {
   // always tell the same story. Picking by time instead drew a different sailing's
   // route — one that skipped stops the highlighted boat really calls at.
   let route = "";
+  let plate = "";                // the big corsa number in the empty top-left
   const callTimes = new Map();   // stop index → when the drawn sailing gets there
   if (a !== b) {
     const direct = findDirect(a, b);
@@ -868,6 +872,14 @@ function renderMap() {
       || direct[direct.length - 1];
     if (journey) {
       for (const [stop, when] of journey.calls) callTimes.set(stop, when);
+      // The lake's northern arm sits well to the right, so everything above y≈250 on
+      // the left is empty and the number can be large enough to read at a glance.
+      plate = `<g class="plate">
+        <text class="plate-k" x="18" y="116">CORSA</text>
+        <text class="plate-n" x="14" y="180">${escape(journey.corsa)}</text>
+        <text class="plate-s" x="18" y="206">${hhmm(journey.dep)} → ${hhmm(journey.arr)}${
+          journey.sr ? "  ·  SR" : ""}</text>
+      </g>`;
       const xy = journey.calls.map((call) => GEO.pts[call[0]].slice(0, 2));
       route = `<polyline class="route" points="${xy.map((p) => p.join(",")).join(" ")}"/>`;
       // An arrowhead partway along each leg, so which way the boat is going is
@@ -902,7 +914,7 @@ function renderMap() {
   }).join("");
 
   svg.setAttribute("viewBox", `0 0 ${GEO.w} ${GEO.h}`);
-  svg.innerHTML = `<path class="water" d="${GEO.path}"/>${route}${marks}<g class="boats"></g>`;
+  svg.innerHTML = `<path class="water" d="${GEO.path}"/>${plate}${route}${marks}<g class="boats"></g>`;
   svg.querySelectorAll("[data-stop]").forEach((group) => {
     group.onclick = () => tapStop(Number(group.dataset.stop));
   });

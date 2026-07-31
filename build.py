@@ -18,7 +18,7 @@ import sys
 # Bump this when something user-visible changes, and give the same number a heading
 # in CHANGELOG.md. The build date beside it in the app is what actually tells you
 # whether the phone has picked up a new copy.
-VERSION = "1.5"
+VERSION = "1.6"
 
 HERE = pathlib.Path(__file__).parent
 SOURCE = HERE / "garda-ferry-2026-summer.json"

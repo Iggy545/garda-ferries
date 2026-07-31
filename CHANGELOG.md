@@ -12,6 +12,16 @@ which lines moved.
 
 Nothing yet.
 
+## 1.6 — 2026-07-31
+
+### Added
+
+- **The corsa number, large, on the map.** It sits in the empty space at the top left
+  — the lake's northern arm is well over to the right, so nothing was using it — with
+  the departure and arrival underneath. It names the sailing the red line traces and
+  the green boat belongs to, so the boat you are looking for can be read at a glance
+  without going back to the timetable.
+
 ## 1.5 — 2026-07-31
 
 ### Added

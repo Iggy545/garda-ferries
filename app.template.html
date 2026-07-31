@@ -322,15 +322,19 @@ const escape = (s) => s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", "
 // "around" gives a couple of sailings before the chosen time and a few after, for
 // the outbound leg. "after" gives only later ones, for the trip back — a boat that
 // left before you arrived is no use to you.
-function pick(list, from, mode) {
+// `all` drops the window and returns everything still catchable, for scrolling
+// through the whole day.
+function pick(list, from, mode, all) {
   const first = list.findIndex((x) => x.dep >= from);
   if (mode === "after") {
-    return first < 0 ? { shown: [], nextIndex: -1 }
-                     : { shown: list.slice(first, first + AFTER), nextIndex: 0 };
+    if (first < 0) return { shown: [], nextIndex: -1, total: 0 };
+    const rest = list.slice(first);
+    return { shown: all ? rest : rest.slice(0, AFTER), nextIndex: 0, total: rest.length };
   }
-  if (first < 0) return { shown: list.slice(-BEFORE - 1), nextIndex: -1 };
+  if (all) return { shown: list, nextIndex: first, total: list.length };
+  if (first < 0) return { shown: list.slice(-BEFORE - 1), nextIndex: -1, total: list.length };
   const start = Math.max(0, first - BEFORE);
-  return { shown: list.slice(start, first + AFTER), nextIndex: first - start };
+  return { shown: list.slice(start, first + AFTER), nextIndex: first - start, total: list.length };
 }
 
 function directCard(journey, isNext, isLast) {
@@ -378,6 +382,7 @@ function changeCard(journey, isNext, isLast) {
 
 // Tracked per section so opening one does not open the other.
 const showChanges = { out: false, back: false };
+const showAll = { out: false, back: false };
 
 // One direction's results. Returns the arrival time of the sailing the user is most
 // likely to catch, which is what the trip back gets planned from.
@@ -394,7 +399,7 @@ function section(a, b, from, mode, key, label) {
     return { html, anchor: null };
   }
 
-  const { shown, nextIndex } = pick(list, from, mode);
+  const { shown, nextIndex, total } = pick(list, from, mode, showAll[key]);
   const last = list[list.length - 1];
 
   if (!shown.length) {
@@ -418,6 +423,13 @@ function section(a, b, from, mode, key, label) {
 
   if (!shown.includes(last)) {
     html += `<p class="note">Last of the day leaves ${hhmm(last.dep)}, in at ${hhmm(last.arr)}.</p>`;
+  }
+
+  if (total > shown.length || showAll[key]) {
+    html += `<button class="more" type="button" data-all="${key}">${
+      showAll[key]
+        ? "Show fewer"
+        : `Show all ${total} ${mode === "after" ? "boats back" : "sailings"}`}</button>`;
   }
 
   if (direct.length) {
@@ -463,6 +475,12 @@ function render() {
       render();
     };
   });
+  results.querySelectorAll("[data-all]").forEach((button) => {
+    button.onclick = () => {
+      showAll[button.dataset.all] = !showAll[button.dataset.all];
+      render();
+    };
+  });
 }
 
 /* ---------- setup ---------- */
@@ -494,7 +512,10 @@ fillSelect(fromSel, saved.a ?? defaultFrom);
 fillSelect(toSel, saved.b ?? defaultTo);
 setNow();
 
-const collapse = () => { showChanges.out = showChanges.back = false; };
+const collapse = () => {
+  showChanges.out = showChanges.back = false;
+  showAll.out = showAll.back = false;
+};
 fromSel.onchange = toSel.onchange = timeInput.onchange = () => { collapse(); render(); };
 $("now").onclick = () => { setNow(); collapse(); render(); };
 $("swap").onclick = () => {

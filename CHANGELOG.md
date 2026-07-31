@@ -16,6 +16,9 @@ them for a reader who wasn't there — what changed and why, not which lines mov
   use — and the **last boat** of the day is tagged, in both directions.
 - When nothing is left, it says when the last one went rather than showing an empty
   list.
+- **Show all** button on each section, to scroll the whole day rather than just the
+  handful around your time. On the trip back that means every boat leaving after you
+  arrive; on the way out, every sailing there is.
 
 ### Changed
 

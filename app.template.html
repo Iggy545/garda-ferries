@@ -22,6 +22,7 @@
   --accent-soft: #e6f1f8;
   --sr: #b4520a;
   --sr-soft: #fdeee0;
+  --mine: #0f7d47;
   --shadow: 0 1px 2px rgba(16, 24, 40, .06), 0 1px 3px rgba(16, 24, 40, .08);
 }
 @media (prefers-color-scheme: dark) {
@@ -35,6 +36,7 @@
     --accent-soft: #14293a;
     --sr: #e8a05e;
     --sr-soft: #33230f;
+    --mine: #4ed08c;
     --shadow: none;
   }
 }
@@ -276,7 +278,45 @@ button:active { background: var(--accent-soft); }
   stroke-width: 1.5;
   cursor: pointer;
 }
-#map .boat.picked { stroke: var(--ink); stroke-width: 2; }
+#map .boat.mine { fill: var(--mine); stroke-width: 2.5; }
+#map .boat.picked { stroke: var(--ink); stroke-width: 2.5; }
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 0 2px 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.legend b { font-weight: 400; display: inline-flex; align-items: center; gap: 5px; }
+.legend i {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--sr);
+}
+.legend .is-mine { background: var(--mine); width: 14px; height: 14px; }
+#boatinfo[hidden] { display: none; }
+#boatinfo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  margin: 8px 0 0;
+  padding: 10px;
+  font-size: 13px;
+  color: var(--ink);
+  background: var(--accent-soft);
+  border-radius: 12px;
+}
+#boatinfo button {
+  margin-left: auto;
+  min-height: 38px;
+  font-size: 14px;
+  background: var(--card);
+  border-color: var(--accent);
+  color: var(--accent);
+}
 #map { display: block; width: 100%; height: auto; }
 #map .water {
   fill: var(--accent-soft);
@@ -334,8 +374,12 @@ footer a { color: var(--muted); }
     <input type="range" id="clock" step="1" aria-label="Time of day">
   </div>
   <p class="clockline" id="clockline"></p>
+  <p class="legend">
+    <b><i class="is-mine"></i>your ferry</b>
+    <b><i></i>other boats under way</b>
+  </p>
   <svg id="map" role="img" aria-label="Map of Lake Garda and its ferry stops"></svg>
-  <p class="credit" id="boatinfo"></p>
+  <div id="boatinfo" hidden><span id="boattext"></span><button type="button" id="follow"></button></div>
   <p class="credit">Boat positions are estimated by straight-line interpolation between
     piers, so they show roughly where a boat has got to — not where it actually is.
     Lake outline and piers from OpenStreetMap contributors, ODbL.</p>
@@ -555,7 +599,7 @@ function section(a, b, from, mode, key, label) {
 
   if (!list.length) {
     html += `<p class="empty">No way to make this trip in a day, direct or with one change.</p>`;
-    return { html, anchor: null };
+    return { html, anchor: null, caught: null };
   }
 
   const { shown, nextIndex, total } = pick(list, from, mode, showAll[key]);
@@ -564,7 +608,7 @@ function section(a, b, from, mode, key, label) {
   if (!shown.length) {
     html += `<p class="empty">Nothing left after ${hhmm(from)}. The last one leaves
       ${hhmm(last.dep)} and gets in at ${hhmm(last.arr)}.</p>`;
-    return { html, anchor: null };
+    return { html, anchor: null, caught: null };
   }
 
   let note;
@@ -606,7 +650,7 @@ function section(a, b, from, mode, key, label) {
   }
 
   const caught = nextIndex >= 0 ? shown[nextIndex] : shown[shown.length - 1];
-  return { html, anchor: caught.arr };
+  return { html, anchor: caught.arr, caught };
 }
 
 function render() {
@@ -622,6 +666,9 @@ function render() {
   const target = Number(h) * 60 + Number(m);
 
   const out = section(a, b, target, "around", "out", "Out");
+  // The boat you would actually board, so the map can pick it out from the rest.
+  // A connection with a change has no single boat, so take the first leg's.
+  myCorsa = out.caught ? (out.caught.corsa || out.caught.legs[0].corsa) : null;
   let html = out.html;
   if (out.anchor !== null) {
     html += section(b, a, out.anchor, "after", "back", "Back").html;
@@ -673,6 +720,7 @@ function boatsAt(t) {
         x: fx + (tx - fx) * along,
         y: fy + (ty - fy) * along,
         corsa: sailing.c, sr: sailing.sr, from, to, due,
+        sails: calls[0][1], lands: calls[calls.length - 1][1],
       });
       break;
     }
@@ -680,24 +728,50 @@ function boatsAt(t) {
   return afloat;
 }
 
+// The sailing the timetable has picked out for the trip you searched for, so it can
+// be told apart from every other boat on the water. `followed` overrides it once you
+// tap a boat and choose to follow that one instead.
+let myCorsa = null;
+let followed = null;
+
+const spotlit = () => followed || myCorsa;
+
 function updateBoats(t) {
   if (!boatLayer) return;
   const afloat = boatsAt(t);
-  boatLayer.innerHTML = afloat.map((boat, i) =>
-    `<circle class="boat" data-boat="${i}" cx="${boat.x.toFixed(1)}"
-       cy="${boat.y.toFixed(1)}" r="4.5"/>`).join("");
+  const mine = spotlit();
+  boatLayer.innerHTML = afloat.map((boat, i) => {
+    const isMine = boat.corsa === mine;
+    return `<circle class="boat${isMine ? " mine" : ""}" data-boat="${i}"
+       cx="${boat.x.toFixed(1)}" cy="${boat.y.toFixed(1)}" r="${isMine ? 7.5 : 4.5}"/>`;
+  }).join("");
+
+  const yours = afloat.some((boat) => boat.corsa === mine);
   $("clockline").textContent =
-    `${hhmm(t)} — ${afloat.length} boat${afloat.length === 1 ? "" : "s"} under way`;
+    `${hhmm(t)} — ${afloat.length} boat${afloat.length === 1 ? "" : "s"} under way` +
+    (mine ? (yours ? ", including yours" : ", yours is not sailing yet") : "");
 
   boatLayer.querySelectorAll("[data-boat]").forEach((dot) => {
     dot.onclick = () => {
       boatLayer.querySelectorAll(".picked").forEach((el) => el.classList.remove("picked"));
       dot.classList.add("picked");
-      const boat = afloat[Number(dot.dataset.boat)];
-      $("boatinfo").textContent = `corsa ${boat.corsa}${boat.sr ? " (SR)" : ""} · ` +
-        `${DATA.stops[boat.from].n} → ${DATA.stops[boat.to].n}, due ${hhmm(boat.due)}`;
+      showBoat(afloat[Number(dot.dataset.boat)]);
     };
   });
+}
+
+function showBoat(boat) {
+  $("boattext").textContent = `corsa ${boat.corsa}${boat.sr ? " (SR)" : ""} · ` +
+    `${DATA.stops[boat.from].n} → ${DATA.stops[boat.to].n}, due ${hhmm(boat.due)}`;
+  const follow = $("follow");
+  follow.textContent = `Follow from ${hhmm(boat.sails)}`;
+  follow.onclick = () => {
+    followed = boat.corsa;          // mark it as the one to watch
+    $("clock").value = boat.sails;  // rewind to where it set off
+    updateBoats(boat.sails);
+    if (!playing) $("play").click();
+  };
+  $("boatinfo").hidden = false;
 }
 
 function stopPlaying() {
@@ -715,7 +789,11 @@ $("play").onclick = () => {
   }, 90);
 };
 
-$("clock").oninput = () => { stopPlaying(); $("boatinfo").textContent = ""; updateBoats(Number($("clock").value)); };
+$("clock").oninput = () => {
+  stopPlaying();
+  $("boatinfo").hidden = true;
+  updateBoats(Number($("clock").value));
+};
 
 function renderMap() {
   const a = Number(fromSel.value), b = Number(toSel.value);
@@ -789,7 +867,7 @@ function showTab(which) {
   const [h, m] = (timeInput.value || "00:00").split(":");
   const target = Number(h) * 60 + Number(m);
   $("clock").value = Math.min(DAY.end, Math.max(DAY.start, target));
-  $("boatinfo").textContent = "";
+  $("boatinfo").hidden = true;
   renderMap();
 }
 
@@ -832,6 +910,7 @@ setNow();
 const collapse = () => {
   showChanges.out = showChanges.back = false;
   showAll.out = showAll.back = false;
+  followed = null;   // a new search means a new ferry to watch for
 };
 fromSel.onchange = toSel.onchange = timeInput.onchange = () => { collapse(); render(); };
 $("now").onclick = () => { setNow(); collapse(); render(); };

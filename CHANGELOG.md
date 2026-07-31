@@ -12,6 +12,18 @@ which lines moved.
 
 Nothing yet.
 
+## 1.2 — 2026-07-31
+
+### Added
+
+- **Your ferry stands out on the map.** The boat carrying the sailing the timetable
+  picked for your trip is drawn larger and in green, against the orange of everything
+  else under way, with a legend saying which is which. The line under the slider also
+  says whether yours is afloat yet.
+- **Follow a boat.** Tap any boat and a *Follow from 09:20* button appears. It rewinds
+  the slider to where that boat set off, starts playing, and marks it as the one to
+  watch, so you can run its whole route through from the beginning.
+
 ## 1.1 — 2026-07-31
 
 ### Added

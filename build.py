@@ -9,10 +9,16 @@ transcribing a new PDF.
     python build.py
 """
 
+import datetime
 import json
 import math
 import pathlib
 import sys
+
+# Bump this when something user-visible changes, and give the same number a heading
+# in CHANGELOG.md. The build date beside it in the app is what actually tells you
+# whether the phone has picked up a new copy.
+VERSION = "1.1"
 
 HERE = pathlib.Path(__file__).parent
 SOURCE = HERE / "garda-ferry-2026-summer.json"
@@ -182,6 +188,8 @@ def main():
 
     data = {
         "valid": timetable["valid"],
+        "version": VERSION,
+        "built": datetime.datetime.now().strftime("%d %b %Y, %H:%M"),
         "stops": stops,
         "sailings": sailings,
         "map": build_map(order),
@@ -193,7 +201,7 @@ def main():
     html = html.replace("/*__DATA__*/", json.dumps(data, separators=(",", ":"), ensure_ascii=False))
     OUTPUT.write_text(html, encoding="utf-8")
 
-    print(f"Wrote {OUTPUT.name}: {len(sailings)} sailings, {len(stops)} stops, "
+    print(f"Wrote {OUTPUT.name}: v{VERSION}, {len(sailings)} sailings, {len(stops)} stops, "
           f"{OUTPUT.stat().st_size // 1024} KB")
     if reordered:
         print(f"Sorted into call order: corse {', '.join(sorted(reordered, key=int))}")

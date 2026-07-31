@@ -58,6 +58,12 @@ Around the chosen time it shows `BEFORE` (2) sailings earlier and `AFTER` (4) la
 marking the first departure at or after that time as *next*. If nothing is left that
 day it falls back to showing the last few.
 
+## Versioning
+
+`VERSION` in `build.py` is shown in the app's footer with the build date. Bump it when
+something user-visible changes and give the same number a heading in `CHANGELOG.md`.
+The date is the part that actually tells you whether a phone has picked up a new copy.
+
 ## The map
 
 `fetch_geo.py` pulls the lake outline from Nominatim and the piers from

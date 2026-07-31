@@ -2,13 +2,28 @@
 
 Notable changes to the app, newest first. Dates are YYYY-MM-DD.
 
-Add new entries under **Unreleased** as you go, then rename that heading to the date
-when you push. Group them under *Added*, *Changed*, *Fixed* or *Removed*, and write
-them for a reader who wasn't there — what changed and why, not which lines moved.
+Add new entries under **Unreleased** as you go, then rename that heading to the
+version and date when you push, and bump `VERSION` in `build.py` to match — that is
+what the app shows in its footer. Group entries under *Added*, *Changed*, *Fixed* or
+*Removed*, and write them for a reader who wasn't there: what changed and why, not
+which lines moved.
 
 ## Unreleased
 
+Nothing yet.
+
+## 1.1 — 2026-07-31
+
 ### Added
+
+- **A time slider on the map**, showing every boat under way at that moment. Drag it
+  through the day, or press play to watch the lake fill up and empty out — it peaks at
+  17 boats around 11:00. Tap a boat to see its *corsa*, which leg it is on and when it
+  is due. Positions between piers are interpolated in a straight line at a steady
+  speed, so they are an estimate of where a boat has got to, not a tracker, and the
+  app says so.
+- **A version number and build date** in the footer, so it is obvious whether the
+  phone has picked up a new copy.
 
 - The trip back is now shown underneath the outbound one, so a day out can be
   planned without swapping the stops over and losing your place. It lists the boats

@@ -223,7 +223,60 @@ button:active { background: var(--accent-soft); }
   font-weight: 600;
 }
 .hint { margin: 14px 2px 4px; font-size: 14px; color: var(--ink); }
-.credit { margin: 4px 2px 0; font-size: 11px; color: var(--muted); }
+.credit { margin: 6px 2px 0; font-size: 11px; color: var(--muted); line-height: 1.4; }
+#boatinfo:not(:empty) {
+  font-size: 13px;
+  color: var(--ink);
+  padding: 8px 10px;
+  background: var(--accent-soft);
+  border-radius: 10px;
+}
+
+/* ---- time slider ---- */
+.clock { display: flex; align-items: center; gap: 10px; margin: 8px 0 0; }
+.clock button { flex: none; width: 46px; font-size: 15px; }
+#clock {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  background: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+}
+#clock::-webkit-slider-runnable-track {
+  height: 5px;
+  border-radius: 3px;
+  background: var(--line);
+}
+#clock::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 26px;
+  height: 26px;
+  margin-top: -10px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 3px solid var(--card);
+  box-shadow: 0 1px 3px rgba(16, 24, 40, .3);
+}
+#clock::-moz-range-track { height: 5px; border-radius: 3px; background: var(--line); }
+#clock::-moz-range-thumb {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--accent); border: 3px solid var(--card);
+}
+.clockline {
+  margin: 2px 2px 6px;
+  font-size: 14px;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+#map .boat {
+  fill: var(--sr);
+  stroke: var(--card);
+  stroke-width: 1.5;
+  cursor: pointer;
+}
+#map .boat.picked { stroke: var(--ink); stroke-width: 2; }
 #map { display: block; width: 100%; height: auto; }
 #map .water {
   fill: var(--accent-soft);
@@ -258,6 +311,7 @@ button:active { background: var(--accent-soft); }
 }
 footer { margin-top: 26px; color: var(--muted); font-size: 12px; padding: 0 2px; }
 footer a { color: var(--muted); }
+#version { display: block; margin-top: 8px; font-variant-numeric: tabular-nums; opacity: .8; }
 </style>
 </head>
 <body>
@@ -275,8 +329,16 @@ footer a { color: var(--muted); }
 
 <div id="pane-map" hidden>
   <p class="hint" id="maphint"></p>
+  <div class="clock">
+    <button type="button" id="play" aria-label="Play through the day">▶</button>
+    <input type="range" id="clock" step="1" aria-label="Time of day">
+  </div>
+  <p class="clockline" id="clockline"></p>
   <svg id="map" role="img" aria-label="Map of Lake Garda and its ferry stops"></svg>
-  <p class="credit">Lake outline and pier positions from OpenStreetMap contributors, ODbL.</p>
+  <p class="credit" id="boatinfo"></p>
+  <p class="credit">Boat positions are estimated by straight-line interpolation between
+    piers, so they show roughly where a boat has got to — not where it actually is.
+    Lake outline and piers from OpenStreetMap contributors, ODbL.</p>
 </div>
 
 <div id="pane-time">
@@ -308,6 +370,7 @@ footer a { color: var(--muted); }
   Times from the Navigazione Laghi summer 2026 timetable. Check
   <a href="https://www.navigazionelaghi.it">navigazionelaghi.it</a> before travelling —
   ships and times can change.
+  <span id="version"></span>
 </footer>
 
 </div>
@@ -584,6 +647,75 @@ function render() {
 const svg = $("map");
 const GEO = DATA.map;
 let picking = "from";   // which end of the trip the next tap on the map sets
+let boatLayer = null;
+let playing = null;
+
+// First departure and last arrival anywhere on the lake, which bounds the slider.
+const DAY = DATA.sailings.reduce((span, sailing) => ({
+  start: Math.min(span.start, sailing.s[0][1]),
+  end: Math.max(span.end, sailing.s[sailing.s.length - 1][1]),
+}), { start: 24 * 60, end: 0 });
+
+// Where every boat under way has got to at time t. Between two calls the position
+// is interpolated in a straight line at a steady speed — the real course curves and
+// the real speed varies, so this is an estimate, not a tracker.
+function boatsAt(t) {
+  const afloat = [];
+  for (const sailing of DATA.sailings) {
+    const calls = sailing.s;
+    if (t < calls[0][1] || t > calls[calls.length - 1][1]) continue;
+    for (let i = 0; i < calls.length - 1; i++) {
+      const [from, left] = calls[i], [to, due] = calls[i + 1];
+      if (t < left || t > due) continue;
+      const along = due === left ? 0 : (t - left) / (due - left);
+      const [fx, fy] = GEO.pts[from], [tx, ty] = GEO.pts[to];
+      afloat.push({
+        x: fx + (tx - fx) * along,
+        y: fy + (ty - fy) * along,
+        corsa: sailing.c, sr: sailing.sr, from, to, due,
+      });
+      break;
+    }
+  }
+  return afloat;
+}
+
+function updateBoats(t) {
+  if (!boatLayer) return;
+  const afloat = boatsAt(t);
+  boatLayer.innerHTML = afloat.map((boat, i) =>
+    `<circle class="boat" data-boat="${i}" cx="${boat.x.toFixed(1)}"
+       cy="${boat.y.toFixed(1)}" r="4.5"/>`).join("");
+  $("clockline").textContent =
+    `${hhmm(t)} — ${afloat.length} boat${afloat.length === 1 ? "" : "s"} under way`;
+
+  boatLayer.querySelectorAll("[data-boat]").forEach((dot) => {
+    dot.onclick = () => {
+      boatLayer.querySelectorAll(".picked").forEach((el) => el.classList.remove("picked"));
+      dot.classList.add("picked");
+      const boat = afloat[Number(dot.dataset.boat)];
+      $("boatinfo").textContent = `corsa ${boat.corsa}${boat.sr ? " (SR)" : ""} · ` +
+        `${DATA.stops[boat.from].n} → ${DATA.stops[boat.to].n}, due ${hhmm(boat.due)}`;
+    };
+  });
+}
+
+function stopPlaying() {
+  if (playing) { clearInterval(playing); playing = null; }
+  $("play").textContent = "▶";
+}
+
+$("play").onclick = () => {
+  if (playing) return stopPlaying();
+  $("play").textContent = "❚❚";
+  playing = setInterval(() => {
+    const next = Number($("clock").value) + 2;
+    $("clock").value = next > DAY.end ? DAY.start : next;
+    updateBoats(Number($("clock").value));
+  }, 90);
+};
+
+$("clock").oninput = () => { stopPlaying(); $("boatinfo").textContent = ""; updateBoats(Number($("clock").value)); };
 
 function renderMap() {
   const a = Number(fromSel.value), b = Number(toSel.value);
@@ -618,10 +750,12 @@ function renderMap() {
   }).join("");
 
   svg.setAttribute("viewBox", `0 0 ${GEO.w} ${GEO.h}`);
-  svg.innerHTML = `<path class="water" d="${GEO.path}"/>${route}${marks}`;
+  svg.innerHTML = `<path class="water" d="${GEO.path}"/>${route}${marks}<g class="boats"></g>`;
   svg.querySelectorAll("[data-stop]").forEach((group) => {
     group.onclick = () => tapStop(Number(group.dataset.stop));
   });
+  boatLayer = svg.querySelector(".boats");
+  updateBoats(Number($("clock").value));
 
   $("maphint").textContent = picking === "from"
     ? "Tap a stop to set where you are starting from."
@@ -650,7 +784,13 @@ function showTab(which) {
   $("pane-time").hidden = onMap;
   $("tab-map").classList.toggle("on", onMap);
   $("tab-time").classList.toggle("on", !onMap);
-  if (onMap) renderMap();
+  if (!onMap) return stopPlaying();
+  // Opening the map shows the lake at the time you were searching for.
+  const [h, m] = (timeInput.value || "00:00").split(":");
+  const target = Number(h) * 60 + Number(m);
+  $("clock").value = Math.min(DAY.end, Math.max(DAY.start, target));
+  $("boatinfo").textContent = "";
+  renderMap();
 }
 
 $("tab-map").onclick = () => { picking = "from"; showTab("map"); };
@@ -677,6 +817,10 @@ function setNow() {
 }
 
 $("validity").textContent = "Summer timetable · " + DATA.valid.replace(" to ", " – ");
+$("version").textContent = `v${DATA.version} · built ${DATA.built}`;
+$("clock").min = DAY.start;
+$("clock").max = DAY.end;
+$("clock").value = DAY.start;
 
 const saved = JSON.parse(localStorage.getItem("garda") || "null") || {};
 const defaultFrom = DATA.stops.findIndex((s) => s.n === "Desenzano");

@@ -8,7 +8,19 @@ them for a reader who wasn't there — what changed and why, not which lines mov
 
 ## Unreleased
 
-Nothing yet.
+### Added
+
+- The trip back is now shown underneath the outbound one, so a day out can be
+  planned without swapping the stops over and losing your place. It lists the boats
+  leaving after you actually arrive — a sailing that left before you got there is no
+  use — and the **last boat** of the day is tagged, in both directions.
+- When nothing is left, it says when the last one went rather than showing an empty
+  list.
+
+### Changed
+
+- Results are split into **Out** and **Back** sections with headings, so each card no
+  longer repeats the route. The *routes with a change* toggle is now per section.
 
 ## 2026-07-31 — first version
 

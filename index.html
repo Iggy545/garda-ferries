@@ -107,8 +107,22 @@ button:active { background: var(--accent-soft); }
 #now { flex: none; align-self: end; }
 
 /* ---- results ---- */
+.sechead {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 2px 8px;
+  margin: 24px 2px 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  font-size: 16px;
+  font-weight: 650;
+  letter-spacing: -.01em;
+}
+.sechead:first-child { border-top: 0; padding-top: 0; margin-top: 20px; }
+.sechead span { font-weight: 400; font-size: 13px; color: var(--muted); }
 .note {
-  margin: 18px 2px 8px;
+  margin: 6px 2px 8px;
   color: var(--muted);
   font-size: 13px;
 }
@@ -152,6 +166,7 @@ button:active { background: var(--accent-soft); }
   color: var(--accent);
 }
 .tag.sr { background: var(--sr-soft); color: var(--sr); }
+.tag.last { background: var(--sr-soft); color: var(--sr); }
 .tag.now { background: var(--accent); color: #fff; }
 .via { flex-basis: 100%; }
 
@@ -304,17 +319,24 @@ const escape = (s) => s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", "
 
 /* ---------- rendering ---------- */
 
-// Pick the sailings around the chosen time: a couple before, a few after.
-function slice(list, target) {
-  const first = list.findIndex((x) => x.dep >= target);
+// "around" gives a couple of sailings before the chosen time and a few after, for
+// the outbound leg. "after" gives only later ones, for the trip back — a boat that
+// left before you arrived is no use to you.
+function pick(list, from, mode) {
+  const first = list.findIndex((x) => x.dep >= from);
+  if (mode === "after") {
+    return first < 0 ? { shown: [], nextIndex: -1 }
+                     : { shown: list.slice(first, first + AFTER), nextIndex: 0 };
+  }
   if (first < 0) return { shown: list.slice(-BEFORE - 1), nextIndex: -1 };
   const start = Math.max(0, first - BEFORE);
   return { shown: list.slice(start, first + AFTER), nextIndex: first - start };
 }
 
-function directCard(journey, isNext, fromName, toName) {
+function directCard(journey, isNext, isLast) {
   const tags = [];
   if (isNext) tags.push('<span class="tag now">next</span>');
+  if (isLast) tags.push('<span class="tag last">last boat</span>');
   if (journey.sr) tags.push('<span class="tag sr">SR supplement</span>');
   tags.push(`<span>corsa ${escape(journey.corsa)}</span>`);
   const via = journey.via.length
@@ -327,12 +349,11 @@ function directCard(journey, isNext, fromName, toName) {
       <span class="t">${hhmm(journey.arr)}</span>
       <span class="dur">${duration(journey.arr - journey.dep)}</span>
     </div>
-    <div class="ends">${escape(fromName)} → ${escape(toName)}</div>
     <div class="meta">${tags.join("")}${via}</div>
   </div>`;
 }
 
-function changeCard(journey, isNext) {
+function changeCard(journey, isNext, isLast) {
   const leg = (l) => `<div class="leg">
       <span class="lt">${hhmm(l.dep)} → ${hhmm(l.arr)}</span>
       <span>${escape(DATA.stops[l.from].n)} → ${escape(DATA.stops[l.to].n)}
@@ -345,7 +366,8 @@ function changeCard(journey, isNext) {
       <span class="t">${hhmm(journey.arr)}</span>
       <span class="dur">${duration(journey.arr - journey.dep)}</span>
     </div>
-    <div class="ends">${isNext ? '<span class="tag now">next</span> ' : ""}1 change at ${escape(journey.via)}</div>
+    <div class="ends">${isNext ? '<span class="tag now">next</span> ' : ""}${
+      isLast ? '<span class="tag last">last boat</span> ' : ""}1 change at ${escape(journey.via)}</div>
     <div class="legs">
       ${leg(journey.legs[0])}
       <div class="change">↳ ${duration(journey.wait)} wait at ${escape(journey.via)}</div>
@@ -354,7 +376,67 @@ function changeCard(journey, isNext) {
   </div>`;
 }
 
-let showChanges = false;
+// Tracked per section so opening one does not open the other.
+const showChanges = { out: false, back: false };
+
+// One direction's results. Returns the arrival time of the sailing the user is most
+// likely to catch, which is what the trip back gets planned from.
+function section(a, b, from, mode, key, label) {
+  const direct = findDirect(a, b);
+  const list = direct.length ? direct : findOneChange(a, b);
+  const card = direct.length ? directCard : changeCard;
+  const route = `${escape(DATA.stops[a].n)} → ${escape(DATA.stops[b].n)}`;
+
+  let html = `<div class="sechead">${label}<span>${route}</span></div>`;
+
+  if (!list.length) {
+    html += `<p class="empty">No way to make this trip in a day, direct or with one change.</p>`;
+    return { html, anchor: null };
+  }
+
+  const { shown, nextIndex } = pick(list, from, mode);
+  const last = list[list.length - 1];
+
+  if (!shown.length) {
+    html += `<p class="empty">Nothing left after ${hhmm(from)}. The last one leaves
+      ${hhmm(last.dep)} and gets in at ${hhmm(last.arr)}.</p>`;
+    return { html, anchor: null };
+  }
+
+  let note;
+  if (mode === "after") {
+    note = `Boats back after your ${hhmm(from)} arrival${direct.length ? "" : ", with one change"}`;
+  } else if (direct.length) {
+    note = `${list.length} direct sailing${list.length > 1 ? "s" : ""} a day${
+      nextIndex < 0 ? " — none left after this time, showing the last ones" : ""}`;
+  } else {
+    note = "No direct sailing — connections with one change";
+  }
+
+  html += `<p class="note">${note}</p>`;
+  html += shown.map((j, i) => card(j, i === nextIndex, j === last)).join("");
+
+  if (!shown.includes(last)) {
+    html += `<p class="note">Last of the day leaves ${hhmm(last.dep)}, in at ${hhmm(last.arr)}.</p>`;
+  }
+
+  if (direct.length) {
+    const changes = findOneChange(a, b);
+    if (changes.length) {
+      html += `<button class="more" type="button" data-toggle="${key}">${
+        showChanges[key] ? "Hide routes with a change" : "Also show routes with a change"}</button>`;
+      if (showChanges[key]) {
+        const alt = pick(changes, from, mode);
+        html += alt.shown.length
+          ? alt.shown.map((j) => changeCard(j, false, false)).join("")
+          : `<p class="empty">Nothing with a change either.</p>`;
+      }
+    }
+  }
+
+  const caught = nextIndex >= 0 ? shown[nextIndex] : shown[shown.length - 1];
+  return { html, anchor: caught.arr };
+}
 
 function render() {
   const a = Number(fromSel.value), b = Number(toSel.value);
@@ -367,35 +449,20 @@ function render() {
 
   const [h, m] = (timeInput.value || "00:00").split(":");
   const target = Number(h) * 60 + Number(m);
-  const fromName = DATA.stops[a].n, toName = DATA.stops[b].n;
 
-  const direct = findDirect(a, b);
-  let html = "";
-
-  if (direct.length) {
-    const { shown, nextIndex } = slice(direct, target);
-    html += `<p class="note">${direct.length} direct sailing${direct.length > 1 ? "s" : ""} a day${
-      nextIndex < 0 ? " — none left after this time, showing the last ones" : ""}</p>`;
-    html += shown.map((j, i) => directCard(j, i === nextIndex, fromName, toName)).join("");
-    html += `<button class="more" type="button" id="toggle">${
-      showChanges ? "Hide routes with a change" : "Also show routes with a change"}</button>`;
+  const out = section(a, b, target, "around", "out", "Out");
+  let html = out.html;
+  if (out.anchor !== null) {
+    html += section(b, a, out.anchor, "after", "back", "Back").html;
   }
-
-  if (!direct.length || showChanges) {
-    const changes = findOneChange(a, b);
-    if (!changes.length) {
-      html += `<p class="empty">No route from ${escape(fromName)} to ${escape(toName)}${
-        direct.length ? " with a change" : ""}, direct or with one change.</p>`;
-    } else {
-      const { shown, nextIndex } = slice(changes, target);
-      html += `<p class="note">${direct.length ? "With one change" : "No direct sailing — with one change"}</p>`;
-      html += shown.map((j, i) => changeCard(j, i === nextIndex && !direct.length)).join("");
-    }
-  }
-
   results.innerHTML = html;
-  const toggle = $("toggle");
-  if (toggle) toggle.onclick = () => { showChanges = !showChanges; render(); };
+
+  results.querySelectorAll("[data-toggle]").forEach((button) => {
+    button.onclick = () => {
+      showChanges[button.dataset.toggle] = !showChanges[button.dataset.toggle];
+      render();
+    };
+  });
 }
 
 /* ---------- setup ---------- */
@@ -427,13 +494,14 @@ fillSelect(fromSel, saved.a ?? defaultFrom);
 fillSelect(toSel, saved.b ?? defaultTo);
 setNow();
 
-fromSel.onchange = toSel.onchange = timeInput.onchange = () => { showChanges = false; render(); };
-$("now").onclick = () => { setNow(); showChanges = false; render(); };
+const collapse = () => { showChanges.out = showChanges.back = false; };
+fromSel.onchange = toSel.onchange = timeInput.onchange = () => { collapse(); render(); };
+$("now").onclick = () => { setNow(); collapse(); render(); };
 $("swap").onclick = () => {
   const a = fromSel.value;
   fromSel.value = toSel.value;
   toSel.value = a;
-  showChanges = false;
+  collapse();
   render();
 };
 // Coming back to the app after a while should not show a stale "next" boat.
